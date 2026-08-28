@@ -1,0 +1,164 @@
+---
+const members = [
+	{ name: 'Tahiya Iffat Majumder', role: 'Operation & Logistics' },
+	{ name: 'Nusaiba Ahmed Naisha', role: 'Visual & Graphics' },
+	{ name: 'Yasin Nobi Muhi', role: 'Membership Driven Program' },
+	{ name: 'Mohtasin Fuad Mahin', role: 'R&D' },
+	{ name: 'Md Abidur Rahman', role: 'Webmaster' },
+	{ name: 'Fathin Hasnath Amil', role: 'Content Writer & Publication', avatar: '/images/home/avatar-fathin.png' },
+	{ name: 'Tasmima Yasmin Puspita', role: 'Public Relations & Branding' },
+];
+---
+
+<section class="associate">
+	<div class="container">
+		<div class="head">
+			<h2>Associate Committee</h2>
+			<p>The technical force behind every initiative</p>
+			<span class="underline"></span>
+		</div>
+
+		<div class="grid">
+			{
+				members.map((member) =>
+					member.avatar ? (
+						<div class="card photo-card">
+							<div class="avatar">
+								<img src={member.avatar} alt={member.name} />
+							</div>
+							<div>
+								<p class="name">{member.name}</p>
+								<p class="role">{member.role}</p>
+							</div>
+						</div>
+					) : (
+						<div class="card">
+							<div class="icon">
+								<img src="/images/home/icon-person.svg" alt="" />
+							</div>
+							<div>
+								<p class="name">{member.name}</p>
+								<p class="role">{member.role}</p>
+							</div>
+						</div>
+					)
+				)
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.associate {
+		background: #fff;
+		padding: 32px 0 96px;
+	}
+
+	.head {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		text-align: right;
+		margin-bottom: 48px;
+	}
+
+	.head h2 {
+		font-size: 32px;
+		font-weight: 600;
+		text-transform: uppercase;
+		color: var(--color-navy);
+		margin-bottom: 8px;
+	}
+
+	.head p {
+		font-size: 16px;
+		color: var(--color-text-secondary);
+	}
+
+	.underline {
+		width: 128px;
+		height: 4px;
+		background: var(--color-purple);
+		margin-top: 16px;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 16px;
+	}
+
+	.card {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		border: 1px solid var(--color-border);
+		border-radius: 2px;
+		padding: 9px;
+	}
+
+	.card.photo-card {
+		background: #fff;
+		border-color: rgba(230, 231, 231, 0.4);
+		padding: 17px;
+	}
+
+	.icon {
+		flex-shrink: 0;
+		width: 64px;
+		height: 64px;
+		border-radius: 12px;
+		background: var(--color-bg-alt-2);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.icon img {
+		width: 16px;
+		height: 16px;
+	}
+
+	.avatar {
+		flex-shrink: 0;
+		width: 64px;
+		height: 64px;
+		border-radius: 12px;
+		overflow: hidden;
+	}
+
+	.avatar img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.name {
+		font-size: 16px;
+		font-weight: 700;
+		color: var(--color-navy);
+	}
+
+	.role {
+		font-size: 16px;
+		color: var(--color-text-muted);
+	}
+
+	.photo-card .name {
+		font-size: 14px;
+	}
+
+	.photo-card .role {
+		font-size: 14px;
+	}
+
+	@media (max-width: 800px) {
+		.grid {
+			grid-template-columns: 1fr;
+		}
+		.head {
+			align-items: flex-start;
+			text-align: left;
+		}
+	}
+</style>

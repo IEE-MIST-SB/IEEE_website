@@ -1,0 +1,169 @@
+---
+interface Props {
+	eyebrow: string;
+	heading: string;
+	quote: string;
+	personName: string;
+	personTitle: string;
+	image: string;
+	imageAlt: string;
+	reverse?: boolean;
+}
+
+const { eyebrow, heading, quote, personName, personTitle, image, imageAlt, reverse = false } = Astro.props;
+---
+
+<section class="leadership" class:list={{ reverse }}>
+	<div class="container grid">
+		<div class="photo-col">
+			<div class="photo-frame">
+				<img src={image} alt={imageAlt} />
+			</div>
+		</div>
+		<div class="text-col">
+			<p class="eyebrow">{eyebrow}</p>
+			<h2>{heading}</h2>
+			<div class="quote-card">
+				<span class="quote-mark" aria-hidden="true">&ldquo;</span>
+				<p class="quote">{quote}</p>
+			</div>
+			<div class="attribution">
+				<span class="divider"></span>
+				<div>
+					<p class="name">{personName}</p>
+					<p class="role">{personTitle}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<style>
+	.leadership {
+		background: var(--color-bg-alt);
+		padding: 96px 0;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: 5fr 7fr;
+		gap: 64px;
+		align-items: center;
+	}
+
+	.leadership.reverse .grid {
+		grid-template-columns: 7fr 5fr;
+	}
+
+	.leadership.reverse .photo-col {
+		order: 2;
+	}
+
+	.leadership.reverse .text-col {
+		order: 1;
+	}
+
+	.photo-frame {
+		border: 8px solid #fff;
+		border-radius: 16px;
+		overflow: hidden;
+		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+	}
+
+	.photo-frame img {
+		width: 100%;
+		aspect-ratio: 1 / 1;
+		object-fit: cover;
+	}
+
+	.text-col {
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+	}
+
+	.eyebrow {
+		font-size: 12px;
+		letter-spacing: 3.6px;
+		text-transform: uppercase;
+		color: var(--color-blue);
+		margin-bottom: -18px;
+	}
+
+	h2 {
+		font-size: 48px;
+		color: var(--color-navy);
+		font-weight: 400;
+	}
+
+	.quote-card {
+		position: relative;
+		background: #fff;
+		border: 1px solid rgba(0, 98, 155, 0.05);
+		border-radius: 16px;
+		padding: 41px;
+		box-shadow:
+			0 20px 25px -5px rgba(0, 0, 0, 0.1),
+			0 8px 10px -6px rgba(0, 0, 0, 0.1);
+	}
+
+	.quote-mark {
+		position: absolute;
+		top: -28px;
+		left: -8px;
+		font-size: 80px;
+		font-weight: 700;
+		color: rgba(0, 98, 155, 0.25);
+		line-height: 1;
+	}
+
+	.quote {
+		font-size: 24px;
+		font-style: italic;
+		line-height: 1.6;
+		color: var(--color-text-secondary);
+	}
+
+	.attribution {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		padding-top: 8px;
+	}
+
+	.divider {
+		width: 48px;
+		height: 2px;
+		background: rgba(0, 98, 155, 0.3);
+		flex-shrink: 0;
+	}
+
+	.name {
+		font-size: 16px;
+		color: var(--color-navy);
+	}
+
+	.role {
+		font-size: 12px;
+		letter-spacing: 1.2px;
+		text-transform: uppercase;
+		color: var(--color-blue);
+	}
+
+	@media (max-width: 800px) {
+		.grid,
+		.leadership.reverse .grid {
+			grid-template-columns: 1fr;
+		}
+		.leadership.reverse .photo-col,
+		.leadership.reverse .text-col {
+			order: initial;
+		}
+		h2 {
+			font-size: 32px;
+		}
+		.quote {
+			font-size: 20px;
+		}
+	}
+</style>

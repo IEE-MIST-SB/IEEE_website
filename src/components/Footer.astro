@@ -1,0 +1,189 @@
+---
+const resources = ['IEEE.org', 'IEEE Xplore', 'IEEE Spectrum'];
+const support = ['Contact Support', 'Privacy Policy', 'Terms of Service'];
+---
+
+<footer class="site-footer">
+	<div class="container top">
+		<div class="brand">
+			<p class="brand-name">IEEE MIST</p>
+			<p class="blurb">
+				Advancing Technology for the Benefit of Humanity. IEEE MIST Student Branch is the premier
+				technical organization at Military Institute of Science and Technology.
+			</p>
+			<div class="socials">
+				<a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+					<img src="/images/home/icon-social-1.svg" alt="" />
+				</a>
+				<a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+					<img src="/images/home/icon-social-2.svg" alt="" />
+				</a>
+			</div>
+		</div>
+
+		<div class="links">
+			<div>
+				<p class="col-title">Resources</p>
+				<ul>
+					{resources.map((item) => <li><a href="https://www.ieee.org" target="_blank" rel="noopener noreferrer">{item}</a></li>)}
+				</ul>
+			</div>
+			<div>
+				<p class="col-title">Support</p>
+				<ul>
+					{support.map((item) => <li><a href="/contact">{item}</a></li>)}
+				</ul>
+			</div>
+		</div>
+
+		<div class="location">
+			<p class="col-title right">Location</p>
+			<p class="address">Mirpur Cantonment, Dhaka-1216<br />Bangladesh</p>
+			<div class="map">
+				<img src="/images/home/map-location.png" alt="Map of IEEE MIST location" />
+			</div>
+		</div>
+	</div>
+
+	<div class="bottom">
+		<div class="container">
+			<p>© 2024 IEEE MIST Student Branch. Empowering Global Innovation.</p>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.site-footer {
+		background: var(--color-navy);
+		border-top: 1px solid rgba(255, 255, 255, 0.05);
+		padding-top: 81px;
+	}
+
+	.top {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 64px;
+		padding-bottom: 80px;
+	}
+
+	.brand-name {
+		font-size: 20px;
+		font-weight: 700;
+		color: #fff;
+		margin-bottom: 23px;
+	}
+
+	.blurb {
+		max-width: 320px;
+		font-size: 14px;
+		line-height: 1.6;
+		color: rgba(255, 255, 255, 0.7);
+		margin-bottom: 17px;
+	}
+
+	.socials {
+		display: flex;
+		gap: 16px;
+	}
+
+	.socials a {
+		width: 40px;
+		height: 40px;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.socials img {
+		width: 16.67px;
+		height: 16.67px;
+	}
+
+	.links {
+		display: flex;
+		gap: 32px;
+		justify-content: center;
+	}
+
+	.col-title {
+		font-size: 10px;
+		font-weight: 900;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.5);
+		margin-bottom: 20px;
+	}
+
+	.col-title.right {
+		text-align: right;
+	}
+
+	.links ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.links a {
+		font-size: 14px;
+		color: rgba(255, 255, 255, 0.7);
+	}
+
+	.location {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 18px;
+	}
+
+	.address {
+		font-size: 14px;
+		color: rgba(255, 255, 255, 0.7);
+		text-align: right;
+		line-height: 1.6;
+	}
+
+	.map {
+		width: 100%;
+		border: 1px solid rgba(255, 255, 255, 0.05);
+		border-radius: 8px;
+		overflow: hidden;
+		opacity: 0.7;
+	}
+
+	.map img {
+		width: 100%;
+		height: auto;
+		object-fit: cover;
+	}
+
+	.bottom {
+		border-top: 1px solid rgba(255, 255, 255, 0.05);
+		padding: 41px 0 80px;
+	}
+
+	.bottom p {
+		text-align: center;
+		font-size: 12px;
+		letter-spacing: 0.6px;
+		color: rgba(255, 255, 255, 0.4);
+	}
+
+	@media (max-width: 800px) {
+		.top {
+			grid-template-columns: 1fr;
+		}
+		.location {
+			align-items: flex-start;
+		}
+		.address,
+		.col-title.right {
+			text-align: left;
+		}
+	}
+</style>

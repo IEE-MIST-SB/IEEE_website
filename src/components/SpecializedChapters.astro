@@ -1,0 +1,138 @@
+---
+const chapters = [
+	{
+		code: 'EDS',
+		name: ['ELECTRON', 'DEVICES SOCIETY'],
+		logo: '/images/home/logo-eds.png',
+		bg: '#e9fdff',
+	},
+	{
+		code: 'APS',
+		name: ['ANTENNAS AND', 'PROPAGATION', 'SOCIETY'],
+		logo: '/images/home/logo-aps.png',
+		bg: 'rgba(102, 123, 255, 0.06)',
+	},
+	{
+		code: 'WIE',
+		name: ['WOMEN IN', 'ENGINEERING'],
+		logo: '/images/home/logo-wie.png',
+		bg: 'rgba(237, 230, 238, 0.4)',
+	},
+	{
+		code: 'MTT-S',
+		name: ['MICROWAVE', 'THEORY AND', 'TECHNOLOGY', 'SOCIETY'],
+		logo: '/images/home/logo-mtts.png',
+		bg: 'rgba(215, 212, 232, 0.4)',
+	},
+	{
+		code: 'SPS',
+		name: ['SIGNAL', 'PROCESSING', 'SOCIETY'],
+		logo: '/images/home/logo-sps.png',
+		bg: 'rgba(202, 234, 211, 0.4)',
+	},
+];
+---
+
+<section class="chapters">
+	<div class="container">
+		<div class="heading">
+			<h2>Our Specialized Chapters</h2>
+			<p>Connecting you to the specialized global technical societies of IEEE</p>
+		</div>
+
+		<div class="grid">
+			{
+				chapters.map((chapter) => (
+					<div class="card" style={`background:${chapter.bg}`}>
+						<div class="logo">
+							<img src={chapter.logo} alt={`${chapter.code} logo`} />
+						</div>
+						<p class="code">{chapter.code}</p>
+						<p class="name">
+							{chapter.name.map((line) => (
+								<>
+									{line}
+									<br />
+								</>
+							))}
+						</p>
+					</div>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.chapters {
+		background: #fff;
+		padding: 64px 0;
+	}
+
+	.heading {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+		text-align: center;
+		margin-bottom: 48px;
+	}
+
+	.heading h2 {
+		font-size: 32px;
+		font-weight: 600;
+		color: var(--color-navy);
+	}
+
+	.heading p {
+		max-width: 512px;
+		font-size: 16px;
+		color: var(--color-text-secondary);
+	}
+
+	.grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 32px;
+		justify-content: center;
+	}
+
+	.card {
+		width: 217px;
+		padding: 41px;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 16px;
+		backdrop-filter: blur(2px);
+		text-align: left;
+	}
+
+	.logo {
+		height: 80px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 16px;
+	}
+
+	.logo img {
+		max-height: 80px;
+		max-width: 100%;
+		object-fit: contain;
+	}
+
+	.code {
+		font-size: 16px;
+		color: var(--color-navy);
+		text-align: center;
+		margin-bottom: 8px;
+	}
+
+	.name {
+		font-size: 14px;
+		letter-spacing: 0.7px;
+		text-transform: uppercase;
+		color: var(--color-blue);
+		text-align: center;
+		line-height: 1.4;
+	}
+</style>

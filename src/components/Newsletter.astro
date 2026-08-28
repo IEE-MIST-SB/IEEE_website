@@ -1,0 +1,83 @@
+---
+---
+
+<section class="newsletter">
+	<div class="container content">
+		<h2>Stay Ahead of the Curve</h2>
+		<p>
+			Join our newsletter to receive the latest updates on technical workshops, seminars, and
+			networking events directly in your inbox.
+		</p>
+		<form class="form">
+			<input type="email" placeholder="Enter your academic email" required aria-label="Academic email" />
+			<button type="submit">Subscribe</button>
+		</form>
+	</div>
+</section>
+
+<style>
+	.newsletter {
+		background: var(--color-navy);
+		padding: 96px 0;
+	}
+
+	.content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 24px;
+		text-align: center;
+	}
+
+	h2 {
+		font-size: 32px;
+		font-weight: 600;
+		color: #fff;
+	}
+
+	p {
+		max-width: 672px;
+		font-size: 20px;
+		color: rgba(255, 255, 255, 0.7);
+		line-height: 1.6;
+	}
+
+	.form {
+		display: flex;
+		gap: 16px;
+		width: 100%;
+		max-width: 512px;
+		padding-top: 24px;
+	}
+
+	.form input {
+		flex: 1;
+		padding: 19px 25px;
+		background: rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 8px;
+		color: #fff;
+		font-size: 16px;
+		font-family: var(--font-sans);
+	}
+
+	.form input::placeholder {
+		color: rgba(255, 255, 255, 0.4);
+	}
+
+	.form button {
+		padding: 17px 40px;
+		background: var(--color-blue);
+		border: none;
+		border-radius: 8px;
+		color: #fff;
+		font-size: 16px;
+		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+	}
+
+	@media (max-width: 560px) {
+		.form {
+			flex-direction: column;
+		}
+	}
+</style>

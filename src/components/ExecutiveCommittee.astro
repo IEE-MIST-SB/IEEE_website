@@ -1,0 +1,157 @@
+---
+const members = [
+	{ name: 'Munawar Arif Nitol', role: 'Chair', avatar: '/images/home/avatar-munawar.png' },
+	{ name: 'Nasiruddin Mahmud Himel', role: 'Vice-Chair', avatar: '/images/home/avatar-nasiruddin.png' },
+	{ name: 'Md. Mehedi Hasan Bhuiyan', role: 'General Secretary', avatar: '/images/home/avatar-mehedi.png' },
+	{ name: 'Hafsa Khan', role: 'Treasurer', avatar: '/images/home/avatar-hafsa.png' },
+	{ name: 'Mahdia Binte Maksud', role: 'Webmaster', avatar: '/images/home/avatar-mahdia.png' },
+	{ name: 'Nushaira Monsur Raya', role: 'Visual Co-Ordinator', avatar: '/images/home/avatar-nushaira.png' },
+];
+---
+
+<section class="team">
+	<div class="container">
+		<div class="head">
+			<div>
+				<h2 class="headline">Meet the minds behind this chapter</h2>
+				<h3 class="subhead">Executive Committee</h3>
+				<p class="tag">The visionaries leading our student branch towards a better future</p>
+			</div>
+			<a href="/about#committee" class="directory-link">
+				Full Member Directory
+				<img src="/images/home/icon-external-link.svg" alt="" />
+			</a>
+		</div>
+
+		<div class="grid">
+			{
+				members.map((member) => (
+					<div class="card">
+						<div class="avatar">
+							<img src={member.avatar} alt={member.name} />
+						</div>
+						<p class="name">{member.name}</p>
+						<p class="role">{member.role}</p>
+					</div>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.team {
+		background: var(--color-bg-alt-2);
+		padding: 96px 0;
+	}
+
+	.head {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 32px;
+		margin-bottom: 64px;
+	}
+
+	.headline {
+		font-size: 44px;
+		font-weight: 900;
+		letter-spacing: -1px;
+		color: var(--color-navy);
+		position: relative;
+		padding-bottom: 16px;
+		margin-bottom: 20px;
+	}
+
+	.headline::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 50%;
+		height: 4px;
+		border-radius: 12px;
+		background: linear-gradient(to right, var(--color-blue), rgba(0, 98, 155, 0));
+	}
+
+	.subhead {
+		font-size: 32px;
+		font-weight: 600;
+		color: var(--color-navy);
+		margin-bottom: 12px;
+	}
+
+	.tag {
+		font-size: 16px;
+		color: var(--color-text-secondary);
+	}
+
+	.directory-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		color: var(--color-blue);
+		font-size: 16px;
+		white-space: nowrap;
+	}
+
+	.directory-link img {
+		width: 13.5px;
+		height: 13.5px;
+	}
+
+	.grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		justify-content: center;
+	}
+
+	.card {
+		width: 187px;
+		background: #fff;
+		border: 1px solid var(--color-border);
+		padding: 17px 17px 41px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	.avatar {
+		width: 96px;
+		height: 96px;
+		border-radius: 50%;
+		overflow: hidden;
+		margin-bottom: 12px;
+	}
+
+	.avatar img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.name {
+		font-size: 16px;
+		font-weight: 700;
+		color: var(--color-navy);
+		margin-bottom: 4px;
+	}
+
+	.role {
+		font-size: 16px;
+		color: var(--color-text-muted);
+		text-transform: capitalize;
+	}
+
+	@media (max-width: 700px) {
+		.head {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+		.headline {
+			font-size: 32px;
+		}
+	}
+</style>

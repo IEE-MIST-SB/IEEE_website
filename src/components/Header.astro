@@ -1,0 +1,122 @@
+---
+const navLinks = [
+	{ label: 'Home', href: '/', active: true },
+	{ label: 'Chapters', href: '/chapters', dropdown: true },
+	{ label: 'Events', href: '/events' },
+	{ label: 'About', href: '/about' },
+	{ label: 'Contact', href: '/contact' },
+	{ label: 'Legacy', href: '/legacy' },
+];
+---
+
+<header class="site-header">
+	<div class="container bar">
+		<a href="/" class="logo">
+			<img src="/images/home/logo-ieee-mist.png" alt="IEEE MIST" />
+		</a>
+
+		<nav class="nav">
+			{
+				navLinks.map((link) => (
+					<a href={link.href} class:list={['nav-link', { active: link.active, dropdown: link.dropdown }]}>
+						{link.label}
+						{link.dropdown && (
+							<img src="/images/home/icon-chevron-down.svg" alt="" class="chevron" />
+						)}
+					</a>
+				))
+			}
+		</nav>
+
+		<div class="search">
+			<img src="/images/home/icon-search.svg" alt="" class="search-icon" />
+			<input type="search" placeholder="Search..." aria-label="Search" />
+		</div>
+	</div>
+</header>
+
+<style>
+	.site-header {
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		backdrop-filter: blur(6px);
+		background: var(--color-blue);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+	}
+
+	.bar {
+		height: 80px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 32px;
+	}
+
+	.logo img {
+		height: 56px;
+		width: auto;
+	}
+
+	.nav {
+		display: flex;
+		align-items: center;
+		gap: 32px;
+	}
+
+	.nav-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		font-size: 16px;
+		color: rgba(255, 255, 255, 0.8);
+		padding-bottom: 6px;
+		white-space: nowrap;
+	}
+
+	.nav-link.active {
+		font-weight: 700;
+		color: rgba(255, 255, 255, 0.8);
+		border-bottom: 2px solid #fff;
+	}
+
+	.nav-link .chevron {
+		width: 7px;
+		height: 4.3px;
+	}
+
+	.search {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 7px 17px;
+		background: rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 12px;
+	}
+
+	.search-icon {
+		width: 15px;
+		height: 15px;
+	}
+
+	.search input {
+		width: 128px;
+		background: transparent;
+		border: none;
+		outline: none;
+		color: #fff;
+		font-size: 14px;
+		font-family: var(--font-sans);
+	}
+
+	.search input::placeholder {
+		color: rgba(255, 255, 255, 0.4);
+	}
+
+	@media (max-width: 900px) {
+		.nav {
+			display: none;
+		}
+	}
+</style>
