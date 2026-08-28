@@ -1,33 +1,35 @@
 ---
+import { withBase } from '../utils/paths';
+
 const chapters = [
 	{
 		code: 'EDS',
 		name: ['ELECTRON', 'DEVICES SOCIETY'],
-		logo: '/images/home/logo-eds.png',
+		logo: withBase('images/home/logo-eds.png'),
 		bg: '#e9fdff',
 	},
 	{
 		code: 'APS',
 		name: ['ANTENNAS AND', 'PROPAGATION', 'SOCIETY'],
-		logo: '/images/home/logo-aps.png',
+		logo: withBase('images/home/logo-aps.png'),
 		bg: 'rgba(102, 123, 255, 0.06)',
 	},
 	{
 		code: 'WIE',
 		name: ['WOMEN IN', 'ENGINEERING'],
-		logo: '/images/home/logo-wie.png',
+		logo: withBase('images/home/logo-wie.png'),
 		bg: 'rgba(237, 230, 238, 0.4)',
 	},
 	{
 		code: 'MTT-S',
 		name: ['MICROWAVE', 'THEORY AND', 'TECHNOLOGY', 'SOCIETY'],
-		logo: '/images/home/logo-mtts.png',
+		logo: withBase('images/home/logo-mtts.png'),
 		bg: 'rgba(215, 212, 232, 0.4)',
 	},
 	{
 		code: 'SPS',
 		name: ['SIGNAL', 'PROCESSING', 'SOCIETY'],
-		logo: '/images/home/logo-sps.png',
+		logo: withBase('images/home/logo-sps.png'),
 		bg: 'rgba(202, 234, 211, 0.4)',
 	},
 ];

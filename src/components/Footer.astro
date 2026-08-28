@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../utils/paths';
+
 const resources = ['IEEE.org', 'IEEE Xplore', 'IEEE Spectrum'];
 const support = ['Contact Support', 'Privacy Policy', 'Terms of Service'];
 ---
@@ -13,10 +15,10 @@ const support = ['Contact Support', 'Privacy Policy', 'Terms of Service'];
 			</p>
 			<div class="socials">
 				<a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-					<img src="/images/home/icon-social-1.svg" alt="" />
+					<img src={withBase('images/home/icon-social-1.svg')} alt="" />
 				</a>
 				<a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-					<img src="/images/home/icon-social-2.svg" alt="" />
+					<img src={withBase('images/home/icon-social-2.svg')} alt="" />
 				</a>
 			</div>
 		</div>
@@ -31,7 +33,7 @@ const support = ['Contact Support', 'Privacy Policy', 'Terms of Service'];
 			<div>
 				<p class="col-title">Support</p>
 				<ul>
-					{support.map((item) => <li><a href="/contact">{item}</a></li>)}
+					{support.map((item) => <li><a href={withBase('/contact')}>{item}</a></li>)}
 				</ul>
 			</div>
 		</div>
@@ -40,7 +42,7 @@ const support = ['Contact Support', 'Privacy Policy', 'Terms of Service'];
 			<p class="col-title right">Location</p>
 			<p class="address">Mirpur Cantonment, Dhaka-1216<br />Bangladesh</p>
 			<div class="map">
-				<img src="/images/home/map-location.png" alt="Map of IEEE MIST location" />
+				<img src={withBase('images/home/map-location.png')} alt="Map of IEEE MIST location" />
 			</div>
 		</div>
 	</div>

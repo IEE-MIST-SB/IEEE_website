@@ -9,6 +9,7 @@ import AssociateCommittee from '../components/AssociateCommittee.astro';
 import RecentActivities from '../components/RecentActivities.astro';
 import Newsletter from '../components/Newsletter.astro';
 import Footer from '../components/Footer.astro';
+import { withBase } from '../utils/paths';
 ---
 
 <Layout>
@@ -22,7 +23,7 @@ import Footer from '../components/Footer.astro';
 			quote="Our mission is to empower the next generation of engineers with the technical prowess and ethical foundation required to solve global challenges."
 			personName="Major General Md. Wahid-Uz-Zaman"
 			personTitle="Chief Patron, IEEE MIST"
-			image="/images/home/photo-chief-patron.png"
+			image={withBase('images/home/photo-chief-patron.png')}
 			imageAlt="Major General Md. Wahid-Uz-Zaman"
 		/>
 
@@ -32,7 +33,7 @@ import Footer from '../components/Footer.astro';
 			quote="Innovation thrives in a community of collaboration. We are committed to providing the resources and mentorship our students need to excel."
 			personName="Professor Dr. Murtaza Ali"
 			personTitle="Branch Counselor, IEEE MIST"
-			image="/images/home/photo-branch-counselor.png"
+			image={withBase('images/home/photo-branch-counselor.png')}
 			imageAlt="Professor Dr. Murtaza Ali"
 			reverse
 		/>

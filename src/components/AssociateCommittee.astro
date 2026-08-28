@@ -1,11 +1,13 @@
 ---
+import { withBase } from '../utils/paths';
+
 const members = [
 	{ name: 'Tahiya Iffat Majumder', role: 'Operation & Logistics' },
 	{ name: 'Nusaiba Ahmed Naisha', role: 'Visual & Graphics' },
 	{ name: 'Yasin Nobi Muhi', role: 'Membership Driven Program' },
 	{ name: 'Mohtasin Fuad Mahin', role: 'R&D' },
 	{ name: 'Md Abidur Rahman', role: 'Webmaster' },
-	{ name: 'Fathin Hasnath Amil', role: 'Content Writer & Publication', avatar: '/images/home/avatar-fathin.png' },
+	{ name: 'Fathin Hasnath Amil', role: 'Content Writer & Publication', avatar: withBase('images/home/avatar-fathin.png') },
 	{ name: 'Tasmima Yasmin Puspita', role: 'Public Relations & Branding' },
 ];
 ---
@@ -34,7 +36,7 @@ const members = [
 					) : (
 						<div class="card">
 							<div class="icon">
-								<img src="/images/home/icon-person.svg" alt="" />
+								<img src={withBase('images/home/icon-person.svg')} alt="" />
 							</div>
 							<div>
 								<p class="name">{member.name}</p>

@@ -1,18 +1,20 @@
 ---
+import { withBase } from '../utils/paths';
+
 const navLinks = [
-	{ label: 'Home', href: '/', active: true },
-	{ label: 'Chapters', href: '/chapters', dropdown: true },
-	{ label: 'Events', href: '/events' },
-	{ label: 'About', href: '/about' },
-	{ label: 'Contact', href: '/contact' },
-	{ label: 'Legacy', href: '/legacy' },
+	{ label: 'Home', href: withBase('/'), active: true },
+	{ label: 'Chapters', href: withBase('/chapters'), dropdown: true },
+	{ label: 'Events', href: withBase('/events') },
+	{ label: 'About', href: withBase('/about') },
+	{ label: 'Contact', href: withBase('/contact') },
+	{ label: 'Legacy', href: withBase('/legacy') },
 ];
 ---
 
 <header class="site-header">
 	<div class="container bar">
-		<a href="/" class="logo">
-			<img src="/images/home/logo-ieee-mist.png" alt="IEEE MIST" />
+		<a href={withBase('/')} class="logo">
+			<img src={withBase('images/home/logo-ieee-mist.png')} alt="IEEE MIST" />
 		</a>
 
 		<nav class="nav">
@@ -21,7 +23,7 @@ const navLinks = [
 					<a href={link.href} class:list={['nav-link', { active: link.active, dropdown: link.dropdown }]}>
 						{link.label}
 						{link.dropdown && (
-							<img src="/images/home/icon-chevron-down.svg" alt="" class="chevron" />
+							<img src={withBase('images/home/icon-chevron-down.svg')} alt="" class="chevron" />
 						)}
 					</a>
 				))
@@ -29,7 +31,7 @@ const navLinks = [
 		</nav>
 
 		<div class="search">
-			<img src="/images/home/icon-search.svg" alt="" class="search-icon" />
+			<img src={withBase('images/home/icon-search.svg')} alt="" class="search-icon" />
 			<input type="search" placeholder="Search..." aria-label="Search" />
 		</div>
 	</div>

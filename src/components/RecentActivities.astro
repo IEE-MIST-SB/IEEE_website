@@ -1,11 +1,13 @@
 ---
+import { withBase } from '../utils/paths';
+
 const slides = [
 	{
-		image: '/images/home/event-techfest.png',
+		image: withBase('images/home/event-techfest.png'),
 		alt: 'TechFest',
 	},
 	{
-		image: '/images/home/event-design-thinking.png',
+		image: withBase('images/home/event-design-thinking.png'),
 		alt: 'Design Thinking workshop',
 		tag: 'WORKSHOP',
 		title: 'Innovations in Robotics',
@@ -43,10 +45,10 @@ const events = [
 										<p>{slide.description}</p>
 										<div class="meta">
 											<span class="date">
-												<img src="/images/home/icon-calendar.svg" alt="" />
+												<img src={withBase('images/home/icon-calendar.svg')} alt="" />
 												{slide.date}
 											</span>
-											<a href="/events" class="btn-register">Register Now</a>
+											<a href={withBase('/events')} class="btn-register">Register Now</a>
 										</div>
 									</div>
 								)}
@@ -56,10 +58,10 @@ const events = [
 				</div>
 
 				<button class="nav-btn prev" data-prev aria-label="Previous slide">
-					<img src="/images/home/icon-chevron-left.svg" alt="" />
+					<img src={withBase('images/home/icon-chevron-left.svg')} alt="" />
 				</button>
 				<button class="nav-btn next" data-next aria-label="Next slide">
-					<img src="/images/home/icon-chevron-right.svg" alt="" />
+					<img src={withBase('images/home/icon-chevron-right.svg')} alt="" />
 				</button>
 
 				<div class="dots" data-dots>
@@ -82,7 +84,7 @@ const events = [
 						</div>
 					))
 				}
-				<a href="/events" class="browse-btn">Browse All Past Events</a>
+				<a href={withBase('/events')} class="browse-btn">Browse All Past Events</a>
 			</div>
 		</div>
 	</div>

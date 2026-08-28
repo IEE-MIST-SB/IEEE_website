@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import heroBg from '../assets/images/hero-bg.png';
+import { withBase } from '../utils/paths';
 ---
 
 <section class="hero">
@@ -23,11 +24,11 @@ import heroBg from '../assets/images/hero-bg.png';
 			fostering a global community of engineers.
 		</p>
 		<div class="actions">
-			<a href="/about" class="btn btn-primary">
+			<a href={withBase('/about')} class="btn btn-primary">
 				Explore Hub
-				<img src="/images/home/icon-arrow-right.svg" alt="" />
+				<img src={withBase('images/home/icon-arrow-right.svg')} alt="" />
 			</a>
-			<a href="/about#mission" class="btn btn-glass">Our Mission</a>
+			<a href={withBase('/about#mission')} class="btn btn-glass">Our Mission</a>
 		</div>
 	</div>
 </section>
