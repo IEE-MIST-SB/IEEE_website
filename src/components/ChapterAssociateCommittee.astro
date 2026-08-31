@@ -5,12 +5,13 @@ import type { Member } from '../data/committee';
 
 interface Props {
 	members: Member[];
+	accent: string;
 }
 
-const { members } = Astro.props;
+const { members, accent } = Astro.props;
 ---
 
-<section class="associate">
+<section class="associate" style={`--accent:${accent}`}>
 	<div class="container">
 		<SectionHeading title="Associate Committee" description="The technical force behind every initiative" />
 
@@ -54,6 +55,7 @@ const { members } = Astro.props;
 		gap: 16px;
 		padding: 17px;
 		border: 1px solid var(--color-border);
+		border-left: 3px solid var(--accent);
 		border-radius: 8px;
 	}
 
@@ -62,7 +64,7 @@ const { members } = Astro.props;
 		width: 64px;
 		height: 64px;
 		border-radius: 12px;
-		background: var(--color-bg-alt-2);
+		background: color-mix(in srgb, var(--accent) 8%, var(--color-bg-alt-2));
 		display: flex;
 		align-items: center;
 		justify-content: center;

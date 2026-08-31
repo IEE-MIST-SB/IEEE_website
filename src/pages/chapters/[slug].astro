@@ -47,13 +47,13 @@ const associates = associatesForChapter(chapter.slug);
 			logo={chapter.logoWhite}
 		/>
 
-		<ChapterAbout code={chapter.code} about={copy.about} mission={copy.mission} vision={copy.vision} />
+		<ChapterAbout code={chapter.code} about={copy.about} mission={copy.mission} vision={copy.vision} accent={chapter.accent} />
 
-		{copy.story && <ChapterStory paragraphs={copy.story} />}
+		{copy.story && <ChapterStory paragraphs={copy.story} accent={chapter.accent} />}
 
-		<ChapterExecutiveCommittee code={chapter.code} members={panel} />
+		<ChapterExecutiveCommittee code={chapter.code} members={panel} accent={chapter.accent} />
 
-		{associates.length > 0 && <ChapterAssociateCommittee members={associates} />}
+		{associates.length > 0 && <ChapterAssociateCommittee members={associates} accent={chapter.accent} />}
 
 		<section class="events" id="events">
 			<div class="container">

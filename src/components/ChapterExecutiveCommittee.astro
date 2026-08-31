@@ -6,14 +6,16 @@ import type { Member } from '../data/committee';
 interface Props {
 	code: string;
 	members: Member[];
+	accent: string;
 }
 
-const { code, members } = Astro.props;
+const { code, members, accent } = Astro.props;
 ---
 
-<section class="exec">
+<section class="exec" style={`--accent:${accent}`}>
 	<div class="container">
 		<SectionHeading title="Executive Committee" description={`The dedicated leadership team steering ${code} MIST towards technical excellence.`} />
+		<span class="underline"></span>
 
 		<div class="grid">
 			{
@@ -39,6 +41,15 @@ const { code, members } = Astro.props;
 	.exec {
 		background: var(--color-bg-alt);
 		padding: 96px 0;
+	}
+
+	.underline {
+		display: block;
+		width: 80px;
+		height: 4px;
+		margin: -24px auto 40px;
+		border-radius: 12px;
+		background: var(--accent);
 	}
 
 	.grid {

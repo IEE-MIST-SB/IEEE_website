@@ -3,12 +3,13 @@ import { withBase } from '../utils/paths';
 
 interface Props {
 	paragraphs: string[];
+	accent: string;
 }
 
-const { paragraphs } = Astro.props;
+const { paragraphs, accent } = Astro.props;
 ---
 
-<section class="story">
+<section class="story" style={`--accent:${accent}`}>
 	<div class="container grid">
 		<div class="photo">
 			<img src={withBase('images/chapters/eds/story-photo.png')} alt="" />
@@ -60,7 +61,7 @@ const { paragraphs } = Astro.props;
 		width: 64px;
 		height: 4px;
 		margin: 16px 0 24px;
-		background: var(--color-blue);
+		background: var(--accent);
 	}
 
 	.text p {
