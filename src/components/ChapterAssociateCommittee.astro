@@ -1,0 +1,101 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { withBase } from '../utils/paths';
+import type { Member } from '../data/committee';
+
+interface Props {
+	members: Member[];
+}
+
+const { members } = Astro.props;
+---
+
+<section class="associate">
+	<div class="container">
+		<SectionHeading title="Associate Committee" description="The technical force behind every initiative" />
+
+		<div class="grid">
+			{
+				members.map((member) => (
+					<div class="card">
+						<div class="icon">
+							{member.avatar ? (
+								<img src={member.avatar} alt={member.name} loading="lazy" />
+							) : (
+								<img src={withBase('images/home/icon-person.svg')} alt="" />
+							)}
+						</div>
+						<div>
+							<p class="name">{member.name}</p>
+							<p class="role">{member.role}</p>
+						</div>
+					</div>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.associate {
+		background: #fff;
+		padding: 96px 0;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 16px;
+	}
+
+	.card {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		padding: 17px;
+		border: 1px solid var(--color-border);
+		border-radius: 8px;
+	}
+
+	.icon {
+		flex-shrink: 0;
+		width: 64px;
+		height: 64px;
+		border-radius: 12px;
+		background: var(--color-bg-alt-2);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+	}
+
+	.icon img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.icon:has(img[src*='icon-person']) img {
+		width: 16px;
+		height: 16px;
+		object-fit: contain;
+		opacity: 0.4;
+	}
+
+	.name {
+		font-size: 16px;
+		font-weight: 700;
+		color: var(--color-navy);
+	}
+
+	.role {
+		font-size: 14px;
+		color: var(--color-text-muted);
+	}
+
+	@media (max-width: 800px) {
+		.grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

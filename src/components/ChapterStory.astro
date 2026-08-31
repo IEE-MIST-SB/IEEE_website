@@ -1,0 +1,84 @@
+---
+import { withBase } from '../utils/paths';
+
+interface Props {
+	paragraphs: string[];
+}
+
+const { paragraphs } = Astro.props;
+---
+
+<section class="story">
+	<div class="container grid">
+		<div class="photo">
+			<img src={withBase('images/chapters/eds/story-photo.png')} alt="" />
+		</div>
+		<div class="text">
+			<h2>Our Story</h2>
+			<span class="underline"></span>
+			{paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+		</div>
+	</div>
+</section>
+
+<style>
+	.story {
+		background: var(--color-bg-alt);
+		padding: 96px 0;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: 389px 1fr;
+		gap: 48px;
+		align-items: center;
+	}
+
+	.photo {
+		aspect-ratio: 1 / 1;
+		border-radius: 8px;
+		overflow: hidden;
+		box-shadow:
+			0 20px 25px -5px rgba(0, 0, 0, 0.1),
+			0 8px 10px -6px rgba(0, 0, 0, 0.1);
+	}
+
+	.photo img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.text h2 {
+		font-size: 32px;
+		font-weight: 600;
+		color: var(--color-navy);
+	}
+
+	.underline {
+		display: block;
+		width: 64px;
+		height: 4px;
+		margin: 16px 0 24px;
+		background: var(--color-blue);
+	}
+
+	.text p {
+		font-size: 16px;
+		line-height: 1.5;
+		color: var(--color-text-secondary);
+	}
+
+	.text p + p {
+		margin-top: 16px;
+	}
+
+	@media (max-width: 800px) {
+		.grid {
+			grid-template-columns: 1fr;
+		}
+		.photo {
+			max-width: 320px;
+		}
+	}
+</style>

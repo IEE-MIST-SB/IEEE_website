@@ -1,0 +1,117 @@
+---
+import { withBase } from '../utils/paths';
+
+interface Props {
+	code: string;
+	fullName: string;
+	subtitle: string;
+	accent: string;
+	logo: string;
+}
+
+const { code, fullName, subtitle, accent, logo } = Astro.props;
+---
+
+<section class="chapter-hero" style={`--accent:${accent}`}>
+	<img src={withBase('images/chapters/eds/bg-pattern.png')} alt="" class="pattern" />
+	<div class="container content">
+		<img src={logo} alt={`${code} logo`} class="logo" />
+		<h1>{fullName}</h1>
+		<p class="subtitle">{subtitle}</p>
+		<div class="actions">
+			<a href="#about" class="btn btn-primary">Explore Our Impact</a>
+			<a href="#events" class="btn btn-glass">Upcoming Events</a>
+		</div>
+	</div>
+</section>
+
+<style>
+	.chapter-hero {
+		position: relative;
+		overflow: hidden;
+		padding: 80px 0;
+		background: linear-gradient(135deg, var(--color-navy) 0%, #013a72 55%, var(--accent) 220%);
+	}
+
+	.pattern {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		mix-blend-mode: overlay;
+		opacity: 0.2;
+	}
+
+	.content {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
+	}
+
+	.logo {
+		height: 72px;
+		width: auto;
+		max-width: 260px;
+		object-fit: contain;
+		margin-bottom: 16px;
+	}
+
+	h1 {
+		max-width: 800px;
+		font-size: 48px;
+		font-weight: 700;
+		line-height: 1.15;
+		letter-spacing: -0.96px;
+		color: #fff;
+	}
+
+	.subtitle {
+		max-width: 672px;
+		padding-top: 8px;
+		font-size: 18px;
+		line-height: 1.55;
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	.actions {
+		display: flex;
+		gap: 16px;
+		padding-top: 24px;
+	}
+
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		padding: 15px 32px;
+		border-radius: 4px;
+		font-size: 16px;
+	}
+
+	.btn-primary {
+		background: var(--color-blue);
+		color: #fff;
+	}
+
+	.btn-glass {
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(6px);
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		color: #fff;
+	}
+
+	@media (max-width: 640px) {
+		h1 {
+			font-size: 34px;
+		}
+		.actions {
+			flex-direction: column;
+			width: 100%;
+		}
+		.btn {
+			justify-content: center;
+		}
+	}
+</style>

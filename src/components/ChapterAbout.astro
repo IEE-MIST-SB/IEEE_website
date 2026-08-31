@@ -1,0 +1,140 @@
+---
+interface Props {
+	code: string;
+	about: string[];
+	mission: string[];
+	vision?: string;
+}
+
+const { code, about, mission, vision } = Astro.props;
+const hasMission = mission.length > 0 || vision;
+---
+
+<section class="about" id="about">
+	<div class="container grid">
+		<div class="col">
+			<h2>About IEEE {code} MIST</h2>
+			<div class="quote">
+				{about.map((paragraph) => <p>{paragraph}</p>)}
+			</div>
+		</div>
+
+		{
+			hasMission && (
+				<div class="col">
+					<h2>Our Mission</h2>
+					{mission.length > 0 && (
+						<ul class="points">
+							{mission.map((point) => (
+								<li>{point}</li>
+							))}
+						</ul>
+					)}
+					{vision && (
+						<div class="vision">
+							<h3>Our Vision</h3>
+							<p>{vision}</p>
+						</div>
+					)}
+				</div>
+			)
+		}
+	</div>
+</section>
+
+<style>
+	.about {
+		background: #fff;
+		padding: 96px 0;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 80px;
+	}
+
+	.col h2 {
+		font-size: 32px;
+		font-weight: 600;
+		color: var(--color-navy);
+		margin-bottom: 24px;
+	}
+
+	.quote {
+		border-left: 4px solid var(--color-blue);
+		padding: 8px 0 8px 20px;
+	}
+
+	.quote p {
+		font-size: 16px;
+		line-height: 1.6;
+		color: var(--color-text-secondary);
+	}
+
+	.quote p + p {
+		margin-top: 16px;
+	}
+
+	.points {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.points li {
+		position: relative;
+		padding-left: 48px;
+		font-size: 16px;
+		line-height: 1.5;
+		color: var(--color-text-secondary);
+	}
+
+	.points li::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 2px;
+		width: 32px;
+		height: 32px;
+		border-radius: 12px;
+		background: rgba(0, 98, 155, 0.08);
+	}
+
+	.points li::after {
+		content: '✓';
+		position: absolute;
+		left: 9px;
+		top: 5px;
+		font-size: 14px;
+		font-weight: 700;
+		color: var(--color-blue);
+	}
+
+	.vision {
+		margin-top: 24px;
+	}
+
+	.vision h3 {
+		font-size: 20px;
+		font-weight: 600;
+		color: var(--color-navy);
+		margin-bottom: 12px;
+	}
+
+	.vision p {
+		font-size: 16px;
+		line-height: 1.6;
+		color: var(--color-text-secondary);
+	}
+
+	@media (max-width: 800px) {
+		.grid {
+			grid-template-columns: 1fr;
+			gap: 48px;
+		}
+	}
+</style>

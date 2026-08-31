@@ -1,0 +1,235 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import { chapters } from '../../data/chapters';
+import { withBase } from '../../utils/paths';
+---
+
+<Layout
+	title="Chapters | IEEE MIST Student Branch"
+	description="Explore the specialized technical chapters and affinity groups of the IEEE MIST Student Branch — EDS, APS, WIE, MTT-S and SPS."
+>
+	<Header />
+	<main>
+		<PageHero
+			eyebrow="Chapters"
+			title="Our Specialized Chapters"
+			subtitle="Each chapter connects members at MIST to one of IEEE's global technical societies, with its own events, leadership, and community."
+			crumbs={[{ label: 'Chapters' }]}
+		/>
+
+		<section class="listing">
+			<div class="container">
+				<SectionHeading
+					eyebrow="Five Chapters"
+					title="Find the community that fits your field"
+					description="Each chapter runs its own workshops, competitions, and mentorship programmes — pick the one closest to what you want to build."
+				/>
+
+				<div class="grid">
+					{
+						chapters.map((chapter) => (
+							<a href={withBase(`/chapters/${chapter.slug}`)} class="card" style={`--accent:${chapter.accent}`}>
+								<div class="logo">
+									<img src={chapter.logoWhite} alt={`${chapter.code} logo`} loading="lazy" />
+								</div>
+								<div class="body">
+									<p class="code">{chapter.code}</p>
+									<h3>{chapter.fullName}</h3>
+									<p class="tagline">{chapter.tagline}</p>
+									<ul class="focus">
+										{chapter.focusAreas.slice(0, 3).map((area) => <li>{area}</li>)}
+									</ul>
+									<span class="more">
+										Visit chapter
+										<img src={withBase('images/home/icon-arrow-right.svg')} alt="" />
+									</span>
+								</div>
+							</a>
+						))
+					}
+				</div>
+			</div>
+		</section>
+
+		<section class="start">
+			<div class="container start-inner">
+				<div>
+					<h2>Want to start a new chapter?</h2>
+					<p>
+						Reach out to the branch's executive committee with a proposal — who you're organising, which
+						IEEE society it maps to, and the events you're planning for the first term.
+					</p>
+				</div>
+				<a class="btn" href={withBase('/contact')}>Talk to the branch</a>
+			</div>
+		</section>
+
+		<Newsletter />
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.listing {
+		padding: 80px 0;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 28px;
+	}
+
+	.card {
+		display: flex;
+		flex-direction: column;
+		border: 1px solid var(--color-border);
+		border-radius: 18px;
+		overflow: hidden;
+		background: #fff;
+		transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+	}
+
+	.card:hover {
+		transform: translateY(-4px);
+		border-color: var(--accent);
+		box-shadow: 0 24px 48px -30px rgba(0, 40, 85, 0.6);
+	}
+
+	.logo {
+		height: 170px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 24px;
+		background: linear-gradient(140deg, var(--color-navy) 0%, #013a72 60%, var(--accent) 190%);
+	}
+
+	.logo img {
+		max-height: 96px;
+		max-width: 78%;
+		object-fit: contain;
+	}
+
+	.body {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding: 26px;
+		flex: 1;
+	}
+
+	.code {
+		font-size: 12px;
+		font-weight: 900;
+		letter-spacing: 2px;
+		color: var(--accent);
+	}
+
+	.body h3 {
+		font-size: 20px;
+		font-weight: 700;
+		line-height: 1.3;
+		color: var(--color-navy);
+	}
+
+	.tagline {
+		flex: 1;
+		font-size: 14px;
+		line-height: 1.65;
+		color: var(--color-text-secondary);
+	}
+
+	.focus {
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin: 4px 0 0;
+		padding: 0;
+	}
+
+	.focus li {
+		padding: 5px 12px;
+		border-radius: 999px;
+		background: var(--color-bg-alt);
+		font-size: 12px;
+		color: var(--color-text-secondary);
+	}
+
+	.more {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin-top: 14px;
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--accent);
+	}
+
+	.more img {
+		width: 14px;
+		height: 14px;
+	}
+
+	.start {
+		background: var(--color-bg-alt);
+		border-top: 1px solid var(--color-border);
+		padding: 64px 0;
+	}
+
+	.start-inner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 32px;
+	}
+
+	.start h2 {
+		font-size: 26px;
+		font-weight: 700;
+		color: var(--color-navy);
+		margin-bottom: 10px;
+	}
+
+	.start p {
+		max-width: 640px;
+		font-size: 15px;
+		line-height: 1.7;
+		color: var(--color-text-secondary);
+	}
+
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		white-space: nowrap;
+		padding: 15px 30px;
+		border-radius: 8px;
+		background: var(--color-blue);
+		color: #fff;
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	@media (max-width: 1024px) {
+		.grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 700px) {
+		.grid {
+			grid-template-columns: 1fr;
+		}
+		.start-inner {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+	}
+</style>

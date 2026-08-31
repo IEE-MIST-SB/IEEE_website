@@ -1,0 +1,119 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ChapterHero from '../../components/ChapterHero.astro';
+import ChapterAbout from '../../components/ChapterAbout.astro';
+import ChapterStory from '../../components/ChapterStory.astro';
+import ChapterExecutiveCommittee from '../../components/ChapterExecutiveCommittee.astro';
+import ChapterAssociateCommittee from '../../components/ChapterAssociateCommittee.astro';
+import ChapterCTA from '../../components/ChapterCTA.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import EventCard from '../../components/EventCard.astro';
+import { chapters } from '../../data/chapters';
+import { chapterPanels, associatesForChapter } from '../../data/committee';
+import { chapterCopy } from '../../data/chapterCopy';
+import { withBase } from '../../utils/paths';
+
+export function getStaticPaths() {
+	return chapters.map((chapter) => ({
+		params: { slug: chapter.slug },
+		props: { chapter },
+	}));
+}
+
+const { chapter } = Astro.props;
+const copy = chapterCopy[chapter.slug];
+
+const allEvents = await getCollection('events');
+const chapterEvents = allEvents
+	.filter((event) => event.data.chapter === chapter.shortName)
+	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+	.slice(0, 3);
+
+const panel = chapterPanels[chapter.slug] ?? [];
+const associates = associatesForChapter(chapter.slug);
+---
+
+<Layout title={`${chapter.code} — ${chapter.fullName} | IEEE MIST`} description={copy.heroSubtitle}>
+	<Header />
+	<main>
+		<ChapterHero
+			code={chapter.code}
+			fullName={chapter.fullName}
+			subtitle={copy.heroSubtitle}
+			accent={chapter.accent}
+			logo={chapter.logoWhite}
+		/>
+
+		<ChapterAbout code={chapter.code} about={copy.about} mission={copy.mission} vision={copy.vision} />
+
+		{copy.story && <ChapterStory paragraphs={copy.story} />}
+
+		<ChapterExecutiveCommittee code={chapter.code} members={panel} />
+
+		{associates.length > 0 && <ChapterAssociateCommittee members={associates} />}
+
+		<section class="events" id="events">
+			<div class="container">
+				<SectionHeading title={`${chapter.code} Events`} description="Recent and upcoming activities from this chapter." />
+				{
+					chapterEvents.length > 0 ? (
+						<div class="event-grid">
+							{chapterEvents.map((event) => (
+								<EventCard
+									title={event.data.title}
+									date={event.data.date}
+									chapter={event.data.chapter}
+									description={event.data.description}
+									image={event.data.image}
+									location={event.data.location}
+									href={withBase(`/events/${event.id}`)}
+								/>
+							))}
+						</div>
+					) : (
+						<p class="empty">No events have been published for this chapter yet.</p>
+					)
+				}
+			</div>
+		</section>
+
+		<ChapterCTA />
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.events {
+		background: var(--color-bg-alt);
+		padding: 96px 0;
+	}
+
+	.event-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 28px;
+	}
+
+	.empty {
+		padding: 48px;
+		text-align: center;
+		border: 1px dashed var(--color-border);
+		border-radius: 16px;
+		color: var(--color-text-muted);
+	}
+
+	@media (max-width: 1024px) {
+		.event-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 600px) {
+		.event-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

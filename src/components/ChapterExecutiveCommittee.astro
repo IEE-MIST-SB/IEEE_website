@@ -1,0 +1,91 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { withBase } from '../utils/paths';
+import type { Member } from '../data/committee';
+
+interface Props {
+	code: string;
+	members: Member[];
+}
+
+const { code, members } = Astro.props;
+---
+
+<section class="exec">
+	<div class="container">
+		<SectionHeading title="Executive Committee" description={`The dedicated leadership team steering ${code} MIST towards technical excellence.`} />
+
+		<div class="grid">
+			{
+				members.map((member) => (
+					<div class="card">
+						<div class="photo">
+							{member.avatar ? (
+								<img src={member.avatar} alt={member.name} loading="lazy" />
+							) : (
+								<img src={withBase('images/home/icon-person.svg')} alt="" class="icon" />
+							)}
+						</div>
+						<p class="name">{member.name}</p>
+						<p class="role">{member.role}</p>
+					</div>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.exec {
+		background: var(--color-bg-alt);
+		padding: 96px 0;
+	}
+
+	.grid {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 16px;
+	}
+
+	.card {
+		width: 189px;
+		text-align: center;
+	}
+
+	.photo {
+		aspect-ratio: 1 / 1;
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+		overflow: hidden;
+		background: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.photo img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.photo img.icon {
+		width: 40px;
+		height: 40px;
+		object-fit: contain;
+		opacity: 0.3;
+	}
+
+	.name {
+		margin-top: 8px;
+		font-size: 16px;
+		font-weight: 700;
+		color: var(--color-navy);
+	}
+
+	.role {
+		font-size: 14px;
+		color: var(--color-text-muted);
+	}
+</style>
