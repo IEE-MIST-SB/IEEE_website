@@ -64,6 +64,8 @@ const associates = associatesForChapter(chapter.slug).map((member) => ({
 			variant={chapter.slug === 'mtt-s' ? 'light' : 'dark'}
 		/>
 
+		<ChapterStory paragraphs={copy.story} accent={chapter.accent} attribution={copy.storyAttribution} />
+
 		<ChapterAbout
 			slug={chapter.slug}
 			code={chapter.code}
@@ -76,8 +78,6 @@ const associates = associatesForChapter(chapter.slug).map((member) => ({
 			accent={chapter.accent}
 			accent2={accent2}
 		/>
-
-		<ChapterStory paragraphs={copy.story} accent={chapter.accent} />
 
 		<ChapterExecutiveCommittee code={chapter.code} members={panel} accent={chapter.accent} />
 

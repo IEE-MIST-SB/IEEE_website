@@ -1,7 +1,8 @@
 /**
- * Chapter page copy sourced from the Figma file (fileKey lkv4breNj08AtswP0xxUyf) and,
- * for EDS/APS/SPS/MTT-S/WIE, from full HTML/Tailwind exports of each chapter's real
- * design that the user supplied directly.
+ * Chapter page copy sourced from the Figma file (fileKey lkv4breNj08AtswP0xxUyf), from
+ * full HTML/Tailwind exports of each chapter's real design that the user supplied
+ * directly, and — for `story` on EDS/APS/SPS/WIE — from real chair's-message PDFs the
+ * user supplied directly (signed with `storyAttribution`).
  *
  * The Figma chapter frames have significant copy-paste contamination — several
  * "About"/"Our Story" sections literally contain another chapter's text (e.g. EDS's
@@ -9,10 +10,8 @@
  * carried SPS's story verbatim). Per instruction, obvious wrong-chapter content was
  * NOT copied as-is; a chapter's own genuine copy was used instead of inventing new text.
  *
- * Where a chapter has no distinct "Our Story" narrative anywhere in its source (APS,
- * MTT-S, WIE all lack one — only EDS and SPS have real founding-history text), its
- * `story` reuses its own genuine `about` copy rather than fabricating founding dates or
- * events with no source.
+ * MTT-S has no chair's-message source yet, so its `story` still reuses its own genuine
+ * `about` copy rather than fabricating a narrative with no source.
  */
 
 export interface MissionItem {
@@ -49,6 +48,8 @@ export interface ChapterCopy {
 	missionHeading?: string;
 	vision?: string;
 	story: string[];
+	/** Signature line under a first-person Our Story (e.g. a chair's message), e.g. "Hafsa Khan, Chair". */
+	storyAttribution?: string;
 	/** "450+ / Active Members" style tiles. Figma repeats identical numbers across every
 	 *  chapter — these are the design's placeholder figures, not verified per-chapter data. */
 	stats?: Stat[];
@@ -71,10 +72,14 @@ export const chapterCopy: Record<string, ChapterCopy> = {
 					'To foster a vibrant community of future engineers specializing in electron device technology through hands-on learning, industrial exposure, and academic mentorship.',
 			},
 		],
+		// Real chair's message, supplied directly by the user ("Message from the Chair | IEEE EDS MIST SBC").
 		story: [
-			'Founded in 2018, the EDS Chapter at MIST was born from a desire to bridge the gap between theoretical semiconductor physics and practical VLSI design. Our early days were spent in humble laboratories, experimenting with breadboards and microcontrollers.',
-			"Today, we serve as a hub for innovation in solid-state circuits and device modeling. We've hosted over 20 technical workshops and established a research culture that has led to several student publications in international journals.",
+			'The modern technological landscape is shaped not at the macro level, but at the scale of nanometers. From the microprocessors powering artificial intelligence to the emerging materials redefining energy efficiency, real innovation begins at the foundational device level. The IEEE Electron Devices Society MIST Student Branch Chapter exists to bring that world of solid-state physics, semiconductor technology, and microelectronics into focus for our students.',
+			'Our vision is to bridge the gap between classroom semiconductor theory and the frontiers of device engineering. We strive to cultivate a vibrant ecosystem where students do not simply view integrated circuits and electron devices as black boxes, but as dynamic systems waiting to be optimized, designed, and revolutionized. By demystifying the physics of micro- and nano-electronics, we aim to prepare our members to actively participate in the rapidly evolving global semiconductor arena.',
+			'To realize this, our chapter focuses on building pathways to real-world expertise. Through technical workshops, expert lectures, and research-oriented discussions, we expose our members to breakthroughs in VLSI design, emerging device architectures, and solid-state fabrication. We aim to provide students with the clarity and mentorship needed to translate complex physical principles into viable, high-impact research and engineering solutions.',
+			'As Chair, my commitment is to make deep-tech accessible and engaging. Whether you are curious about what lies beneath the silicon wafer, eager to explore advanced device modeling, or aspiring to contribute to future hardware innovations, our chapter is your platform. Join us as we explore the atomic-scale foundations that power the future.',
 		],
+		storyAttribution: 'Hafsa Khan, Chair — IEEE EDS MIST SBC',
 	},
 	sps: {
 		heroTitle: 'Signal Processing Society',
@@ -100,10 +105,14 @@ export const chapterCopy: Record<string, ChapterCopy> = {
 					'To be a global leader in signal processing education and research, empowering students to solve real-world challenges through data and signal analysis.',
 			},
 		],
+		// Real chair's message, supplied directly by the user ("Chair, IEEE SPS MIST SB Chapter Group's Message").
 		story: [
-			'Founded with a vision to foster a vibrant community of signal processing enthusiasts, the SPS Chapter at MIST has grown into a hub for technical innovation and academic excellence.',
-			'Since its inception, our chapter has been dedicated to empowering students through hands-on workshops, research-driven projects, and global collaboration, bridging the gap between theoretical knowledge and real-world applications in signal and image processing.',
+			'Have we ever considered how closely signals are associated with our everyday lives? From the alarm that marks the beginning of our day and the rhythm of our heartbeat to the lectures we attend, the music we listen to, and the images we observe, information reaches us continuously through signals in different forms. Understanding, analyzing, and interpreting such information lies at the core of signal processing.',
+			'The IEEE Signal Processing Society MIST Student Branch Chapter aims to provide students with a platform to explore this broad and continuously developing field beyond the scope of conventional coursework. Our objective is to strengthen students’ understanding of signal processing while providing exposure to contemporary applications, research directions, and professional practices.',
+			'Through technical sessions, workshops, seminars, research-oriented activities, and interaction with academic and industry professionals, the Chapter seeks to promote technical learning and scholarly engagement among its members. We intend to provide opportunities through which students can exchange knowledge, develop research interests, and establish meaningful connections with the wider IEEE Signal Processing Society community.',
+			'As Chair, I am committed to working with our members and the Chapter team to develop an active and inclusive technical community at MIST. I hope the Chapter will serve as a platform where students can broaden their knowledge, pursue their technical interests, and gradually develop the skills and perspectives required to contribute to the field.',
 		],
+		storyAttribution: 'Mahdia Binte Maksud, Chair — IEEE SPS MIST SB',
 	},
 	aps: {
 		heroTitle: 'Antennas and Propagation Society',
@@ -134,12 +143,14 @@ export const chapterCopy: Record<string, ChapterCopy> = {
 			{ value: '25+', label: 'Research Projects' },
 			{ value: '12', label: 'Annual Workshops' },
 		],
-		// APS's source has no distinct founding-history narrative — its "Our Story" eyebrow
-		// sits directly over this same About copy, so reuse it rather than invent one.
+		// Real chair's message, supplied directly by the user ("APS story.pdf").
 		story: [
-			'The IEEE Antennas and Propagation Society (APS) at MIST is a premier technical community dedicated to the science of electromagnetic wave theory and its practical applications. Our chapter serves as a hub for students and faculty to explore the frontiers of antenna design, scattering, and propagation.',
-			'By bridging the gap between theoretical physics and applied engineering, we empower our members to contribute to the next generation of wireless technologies—from satellite communications to 5G/6G network infrastructure.',
+			'Advancing communication engineering requires more than studying established theories; it demands a deep connection to the ongoing global conversation in electromagnetics. The IEEE Antennas and Propagation Society MIST Student Branch Chapter exists to ignite that scholarly curiosity within our institution.',
+			'Our vision is to help students bridge the gap between textbook fundamentals and impactful scientific discovery. We aim to establish MIST as a premier community for radio frequency design and applied electromagnetics, inspiring our members to envision their own contributions to the field.',
+			'To achieve this, we host dynamic academic seminars and technical sessions that bring real world experts directly to our students. By showcasing advanced research and the practical challenges tackled by industry leaders, we expose our members to the true scope of modern engineering and the brilliant minds shaping it.',
+			'As Chair, my commitment is to support your academic journey by connecting you with the broader scientific community. Whether you are exploring a new research interest or looking to understand the latest technological breakthroughs, our chapter is here to expand your perspective. Join us in exploring the boundless potential of applied research.',
 		],
+		storyAttribution: 'Md. Mehedi Hasan Bhuiyan, Chair — IEEE APS MIST Chapter',
 	},
 	wie: {
 		heroHeadline: { before: 'Empowering Women in', highlight: 'Engineering', after: '& Science' },
@@ -171,11 +182,14 @@ export const chapterCopy: Record<string, ChapterCopy> = {
 			{ value: '450+', label: 'Active Members' },
 			{ value: '15+', label: 'Annual Events' },
 		],
-		// No distinct founding-history narrative exists in WIE's source either — reuse About.
+		// Real chair's message, supplied directly by the user ("Chair, IEEE MIST SB WIE Affinity Group's Message").
 		story: [
-			'IEEE Women in Engineering (WIE) is one of the largest international professional organizations dedicated to promoting women engineers and scientists and inspiring girls around the world to follow their academic interests to a career in engineering.',
-			'At MIST, our WIE Affinity Group serves as a catalyst for professional growth and community support. We organize technical workshops, leadership seminars, and mentorship programs that bridge the gap between academia and industry.',
+			"When I think about why the IEEE MIST SB WIE Affinity Group exists, I don't start with a mission statement. I start with a memory: a first-year student, unsure if she belongs in a room full of circuits and control systems. Multiply her by every department, batch, and year, and you have our core purpose, not as an afterthought to engineering education, but as a promise that no one has to find her footing alone.",
+			"Our vision is simple: a MIST where women don't just participate, but lead in research labs, technical societies, industry boardrooms, and the very academic institutions that shape them. We want the presence of women across every discipline to be so unremarkable that it never again feels like an exception.",
+			'Day to day, we build bridges between students and professionals. This year, that meant bringing together voices like Naima Fatima and Maliha Hossain Ridita for Engineering Her Way, addressing what it truly takes to build a career in this field. We create spaces for technical growth and community workshops, panels, and mentorship circles, while advocating for representation across IEEE\'s leadership pipelines.',
+			"As Chair, my role is to clear the path; walking alongside new students while learning from those who came before. IEEE WIE gave me a global community when I needed it most. My hope is that our Affinity Group does the same for the next student sitting quietly in a lecture hall, wondering if she belongs. She does. We're building the proof of it, one activity at a time.",
 		],
+		storyAttribution: 'Sarah Zahin, Chair — IEEE MIST SB WIE Affinity Group',
 	},
 	'mtt-s': {
 		heroHeadline: { before: 'Advancing the Frontier of', highlight: 'Microwave Engineering', after: '' },

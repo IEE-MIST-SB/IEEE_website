@@ -5,9 +5,10 @@ interface Props {
 	paragraphs: string[];
 	accent: string;
 	image?: string;
+	attribution?: string;
 }
 
-const { paragraphs, accent, image } = Astro.props;
+const { paragraphs, accent, image, attribution } = Astro.props;
 ---
 
 <section class="story" style={`--accent:${accent}`}>
@@ -23,6 +24,7 @@ const { paragraphs, accent, image } = Astro.props;
 			<h2>Our Story</h2>
 			<span class="underline"></span>
 			{paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+			{attribution && <p class="attribution">— {attribution}</p>}
 		</div>
 	</div>
 </section>
@@ -92,6 +94,14 @@ const { paragraphs, accent, image } = Astro.props;
 
 	.text p + p {
 		margin-top: 16px;
+	}
+
+	.attribution {
+		margin-top: 20px !important;
+		font-size: 14px;
+		font-weight: 600;
+		font-style: italic;
+		color: var(--accent);
 	}
 
 	@media (max-width: 800px) {

@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
+import ChapterStory from '../components/ChapterStory.astro';
 import LeadershipMessage from '../components/LeadershipMessage.astro';
 import SpecializedChapters from '../components/SpecializedChapters.astro';
 import ExecutiveCommittee from '../components/ExecutiveCommittee.astro';
@@ -16,6 +17,14 @@ import { withBase } from '../utils/paths';
 	<Header />
 	<main>
 		<Hero />
+
+		<ChapterStory
+			accent="#00629b"
+			paragraphs={[
+				'IEEE MIST Student Branch is the premier technical organization at the Military Institute of Science and Technology, advancing technology for the benefit of humanity.',
+				'We are a hub for innovation, leadership, and technical excellence, bringing together five specialized chapters and affinity groups to foster a global community of engineers through workshops, seminars, and hands-on projects.',
+			]}
+		/>
 
 		<LeadershipMessage
 			eyebrow="Leadership Message"
