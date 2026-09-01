@@ -2,18 +2,23 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { executiveCommittee } from '../data/committee';
+import { executiveCommittee, associateCommittee } from '../data/committee';
 import { withBase } from '../utils/paths';
 
 /**
  * Content sourced from IEEE_MIST_SB_Website_Content.md, supplied directly by the user:
  * "The Story of IEEE MIST SB" and "Message from the Chair" (Munawar Arif Nitol), both
  * used close to verbatim. Real stats (members, associate directors, coordinators,
- * chapters) come from that same source. The mockup's fake stats (500+ members, 100+
- * annual events, 15+ awards, "Established 2016"), fake year-by-year milestones, fake
- * Mission/Vision copy, and fake "Our Contributors" names had no source, so none of that
- * was carried over — see the git history for the earlier honest "000+" placeholders this
- * replaces.
+ * chapters) come from that same source.
+ *
+ * The mockup's "Our Journey" timeline, Mission/Vision, and "Our Contributors" sections
+ * were fabricated (invented year-by-year milestones with specific member counts, generic
+ * Mission/Vision copy, six fake generic contributor names) with nothing to source them
+ * from. Per the site owner, kept as real sections but re-grounded: Journey only states
+ * milestones the source doc actually gives (no invented specific counts for the
+ * undated ones); Mission is the Chair's own quoted words, Vision is closely paraphrased
+ * from the Story text; Contributors shows the branch's real Associate Directors plus the
+ * site's real developer, Nazifa Tasnim (also WIE's Webmaster — same photo, both real).
  */
 
 const stats = [
@@ -44,6 +49,50 @@ const chairMessage = [
 	'None of this happens in isolation. I remain deeply grateful to our Chief Patron, Brigadier General K M Mustafizur Rahman, psc, and our counselor, Lt Col Md Aminul Islam, PhD, EME, for their continuous guidance. Their support gives this branch the direction it needs to keep moving forward.',
 	'IEEE MIST SB is in a strong place today because of the people who led it before me. My job now is to take that foundation and elevate it, one member, one event, one idea at a time.',
 ];
+
+const journey = [
+	{
+		year: '2015',
+		title: 'The Inception',
+		description:
+			'IEEE MIST Student Branch opened its doors on 5 May 2015 with just six members, marked by a small inauguration ceremony.',
+	},
+	{
+		title: 'Building the Structure',
+		description:
+			'The branch grew into a three-tier structure of Coordinators, Associate Directors, and Excomm members — now running on the energy of over a hundred members.',
+	},
+	{
+		title: 'Five Specialized Chapters',
+		description:
+			'IEEE MIST SB became the parent organization for five chapters — WIE, APS, EDS, SPS, and MTT-S — each carrying the founding spirit into a different corner of engineering.',
+	},
+	{
+		title: 'ICEEICT, Our Signature Event',
+		description:
+			"The International Conference on Electrical Engineering and Information & Communication Technology became the branch's signature event, now heading into its 7th edition.",
+	},
+	{
+		year: '2026',
+		title: 'Eleven Years On',
+		description:
+			'The branch that began with six members now shapes the experience of over a hundred, and stands as one of the most recognized student organizations at MIST.',
+	},
+];
+
+const mission =
+	'Every member of IEEE MIST SB should walk away having reached a little closer to their full potential — not just attended events, but actually grown from them.';
+
+const vision =
+	"To grow from a six-member idea into a lasting structure — now the parent organization of five specialized chapters — that gives every engineering student at MIST a home to grow through, not just attend.";
+
+const nazifa = {
+	name: 'Nazifa Tasnim',
+	role: 'Website Developer',
+	avatar: withBase('images/chapters/wie/exec/nazifa-tasnim.jpg'),
+};
+
+const contributors = [...associateCommittee, nazifa];
 
 const programs = [
 	{
@@ -110,6 +159,41 @@ const programs = [
 			</div>
 		</section>
 
+		<section class="journey">
+			<div class="container">
+				<h2>Our Journey</h2>
+				<span class="rule"></span>
+				<ol class="timeline">
+					{
+						journey.map((item) => (
+							<li>
+								<span class="marker" />
+								<div>
+									{item.year && <p class="year">{item.year}</p>}
+									<p class="milestone-title">{item.title}</p>
+									<p class="desc">{item.description}</p>
+								</div>
+							</li>
+						))
+					}
+				</ol>
+			</div>
+		</section>
+
+		<section class="mv" id="mission">
+			<div class="container mv-grid">
+				<div class="mv-card">
+					<h2>Our Mission</h2>
+					<p>{mission}</p>
+					<p class="mv-source">— Munawar Arif Nitol, Chair</p>
+				</div>
+				<div class="mv-card">
+					<h2>Our Vision</h2>
+					<p>{vision}</p>
+				</div>
+			</div>
+		</section>
+
 		<section class="programs">
 			<div class="container">
 				<h2>What We Run</h2>
@@ -145,6 +229,30 @@ const programs = [
 						{chairMessage.map((paragraph) => <p>{paragraph}</p>)}
 					</div>
 					<p class="attribution">— {chair?.name ?? 'Munawar Arif Nitol'}, Chair, IEEE MIST Student Branch</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="contributors">
+			<div class="container">
+				<h2>Our Contributors</h2>
+				<p class="lede">Honoring the Associate Directors and volunteers who drive IEEE MIST SB forward.</p>
+				<div class="contributor-grid">
+					{
+						contributors.map((person) => (
+							<div class="contributor">
+								<div class="avatar">
+									{person.avatar ? (
+										<img src={person.avatar} alt={person.name} loading="lazy" />
+									) : (
+										<img src={withBase('images/home/icon-person.svg')} alt="" class="icon" loading="lazy" />
+									)}
+								</div>
+								<p class="c-name">{person.name}</p>
+								<p class="c-role">{person.role}</p>
+							</div>
+						))
+					}
 				</div>
 			</div>
 		</section>
@@ -260,6 +368,166 @@ const programs = [
 
 	.prose p:first-child {
 		margin-top: 32px;
+	}
+
+	.journey {
+		background: #f4f4f4;
+		padding: 88px 0;
+	}
+
+	.timeline {
+		list-style: none;
+		position: relative;
+		margin: 48px 0 0;
+		padding: 0 0 0 40px;
+		max-width: 860px;
+	}
+
+	.timeline::before {
+		content: '';
+		position: absolute;
+		left: 7px;
+		top: 8px;
+		bottom: 8px;
+		width: 2px;
+		background: linear-gradient(to bottom, var(--color-blue), rgba(0, 98, 155, 0.15));
+	}
+
+	.timeline li {
+		position: relative;
+		padding-bottom: 36px;
+	}
+
+	.timeline li:last-child {
+		padding-bottom: 0;
+	}
+
+	.marker {
+		position: absolute;
+		left: -40px;
+		top: 4px;
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		background: #fff;
+		border: 3px solid var(--color-blue);
+	}
+
+	.timeline .year {
+		font-size: 14px;
+		font-weight: 800;
+		letter-spacing: 1px;
+		color: var(--color-blue);
+		margin-bottom: 4px;
+	}
+
+	.timeline .milestone-title {
+		font-size: 20px;
+		font-weight: 700;
+		color: var(--color-navy);
+		margin-bottom: 8px;
+	}
+
+	.timeline .desc {
+		font-size: 16px;
+		line-height: 1.65;
+		color: var(--color-text-secondary);
+	}
+
+	.mv {
+		padding: 88px 0;
+		scroll-margin-top: 100px;
+	}
+
+	.mv-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 32px;
+	}
+
+	.mv-card {
+		padding: 36px;
+		background: #f4f4f4;
+		border-bottom: 2px solid var(--color-blue);
+		border-radius: 4px;
+	}
+
+	.mv-card p {
+		margin-top: 20px;
+		font-size: 16px;
+		line-height: 1.7;
+		color: var(--color-text-secondary);
+	}
+
+	.mv-source {
+		margin-top: 12px !important;
+		font-size: 13px !important;
+		font-weight: 700;
+		font-style: italic;
+		color: var(--color-blue) !important;
+	}
+
+	.contributors {
+		background: #f4f4f4;
+		padding: 88px 0;
+		text-align: center;
+	}
+
+	.contributors .lede {
+		max-width: 560px;
+		margin: 16px auto 0;
+		font-size: 16px;
+		color: var(--color-text-secondary);
+	}
+
+	.contributor-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 32px;
+		margin-top: 48px;
+	}
+
+	.contributor {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.contributor .avatar {
+		width: 88px;
+		height: 88px;
+		border-radius: 50%;
+		overflow: hidden;
+		background: #fff;
+		border: 1px solid var(--color-border);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.contributor .avatar img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.contributor .avatar img.icon {
+		width: 32px;
+		height: 32px;
+		object-fit: contain;
+		opacity: 0.35;
+	}
+
+	.contributor .c-name {
+		font-size: 15px;
+		font-weight: 700;
+		color: var(--color-navy);
+	}
+
+	.contributor .c-role {
+		font-size: 13px;
+		color: var(--color-text-muted);
 	}
 
 	.programs {
@@ -381,6 +649,9 @@ const programs = [
 		.program-grid {
 			grid-template-columns: repeat(2, 1fr);
 		}
+		.contributor-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
 	}
 
 	@media (max-width: 860px) {
@@ -399,6 +670,12 @@ const programs = [
 		.chair-photo {
 			max-width: 240px;
 			position: static;
+		}
+		.mv-grid {
+			grid-template-columns: 1fr;
+		}
+		.contributor-grid {
+			grid-template-columns: repeat(2, 1fr);
 		}
 	}
 
