@@ -12,12 +12,36 @@
  * beyond EDS and SPS), the field is simply omitted rather than fabricated.
  */
 
+export interface MissionItem {
+	icon: string;
+	title: string;
+	description: string;
+}
+
+export interface Stat {
+	value: string;
+	label: string;
+}
+
+/** A hero headline with one highlighted word/phrase, e.g. "Empowering Women in **Engineering** & Science". */
+export interface HeroHeadline {
+	before: string;
+	highlight: string;
+	after: string;
+}
+
 export interface ChapterCopy {
 	heroSubtitle: string;
+	/** Custom hero headline with a highlighted word. Falls back to the chapter's fullName when omitted. */
+	heroHeadline?: HeroHeadline;
 	about: string[];
 	mission: string[];
+	missionItems?: MissionItem[];
 	vision?: string;
 	story?: string[];
+	/** "450+ / Active Members" style tiles. Figma repeats identical numbers across every
+	 *  chapter — these are the design's placeholder figures, not verified per-chapter data. */
+	stats?: Stat[];
 }
 
 export const chapterCopy: Record<string, ChapterCopy> = {
@@ -65,12 +89,35 @@ export const chapterCopy: Record<string, ChapterCopy> = {
 			'To establish a world-class hub for electromagnetic research and systems thinking, empowering students to solve complex wireless communication challenges.',
 	},
 	wie: {
-		heroSubtitle: 'Inspiring, engaging, and advancing women in engineering.',
+		heroHeadline: { before: 'Empowering Women in', highlight: 'Engineering', after: '& Science' },
+		heroSubtitle:
+			'The IEEE Women in Engineering (WIE) Affinity Group at MIST Student Branch is dedicated to promoting women engineers and scientists, and inspiring girls to follow their academic interests in a career in engineering.',
 		about: [
 			'IEEE Women in Engineering (WIE) is one of the largest international professional organizations dedicated to promoting women engineers and scientists and inspiring girls around the world to follow their academic interests to a career in engineering.',
 			'At MIST, our WIE Affinity Group serves as a catalyst for professional growth and community support. We organize technical workshops, leadership seminars, and mentorship programs that bridge the gap between academia and industry.',
 		],
 		mission: [],
+		missionItems: [
+			{
+				icon: 'verified',
+				title: 'Recognize Excellence',
+				description: 'Promote and celebrate the achievements of women engineers through awards and fellowships.',
+			},
+			{
+				icon: 'group',
+				title: 'Build Community',
+				description: 'Foster a vibrant network where students can find support and professional networking opportunities.',
+			},
+			{
+				icon: 'school',
+				title: 'Inspire Next Gen',
+				description: 'Organize outreach programs targeting school-age girls to encourage STEM career paths.',
+			},
+		],
+		stats: [
+			{ value: '450+', label: 'Active Members' },
+			{ value: '15+', label: 'Annual Events' },
+		],
 	},
 	'mtt-s': {
 		heroSubtitle: 'Microwave theory, techniques, and high-frequency applications.',

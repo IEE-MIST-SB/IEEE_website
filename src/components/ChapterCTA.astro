@@ -1,52 +1,97 @@
 ---
 import { chapterCta } from '../data/chapterCopy';
+import { chapterCtaPattern } from '../data/chapterAvatars';
 import { withBase } from '../utils/paths';
+
+interface Props {
+	slug: string;
+	accent: string;
+}
+
+const { slug, accent } = Astro.props;
+
+const pattern = chapterCtaPattern[slug] ? withBase(`images/chapters/${slug}/cta-pattern.png`) : null;
 ---
 
-<section class="cta">
-	<div class="container content">
-		<h2>{chapterCta.heading}</h2>
-		<p>{chapterCta.body}</p>
-		<a href={withBase('/contact')} class="btn">{chapterCta.button}</a>
+<section class="cta-wrap">
+	<div class="container">
+		<div class="cta" style={`--accent:${accent}`}>
+			{pattern && <img src={pattern} alt="" class="pattern" />}
+			<div class="content">
+				<h2>{chapterCta.heading}</h2>
+				<p>{chapterCta.body}</p>
+				<a href={withBase('/contact')} class="btn">{chapterCta.button}</a>
+			</div>
+		</div>
 	</div>
 </section>
 
 <style>
+	.cta-wrap {
+		background: #fff;
+		padding: 32px 0;
+	}
+
 	.cta {
-		background: var(--color-navy);
-		padding: 96px 0;
+		position: relative;
+		overflow: hidden;
+		background: var(--accent);
+		border-radius: 12px;
+		padding: 40px;
+		text-align: center;
+	}
+
+	.pattern {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		opacity: 0.1;
+		transition: opacity 0.3s ease;
+	}
+
+	.cta:hover .pattern {
+		opacity: 0.2;
 	}
 
 	.content {
+		position: relative;
+		max-width: 672px;
+		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 16px;
-		text-align: center;
 	}
 
 	h2 {
 		font-size: 32px;
 		font-weight: 600;
+		line-height: 40px;
 		color: #fff;
 	}
 
 	p {
-		max-width: 640px;
 		font-size: 16px;
 		line-height: 1.6;
-		color: rgba(255, 255, 255, 0.75);
+		color: rgba(255, 255, 255, 0.9);
 	}
 
 	.btn {
 		display: inline-flex;
 		align-items: center;
-		margin-top: 16px;
+		margin-top: 8px;
 		padding: 16px 32px;
-		background: var(--color-blue);
-		color: #fff;
+		background: #fff;
+		color: var(--accent);
 		font-size: 16px;
-		font-weight: 600;
-		border-radius: 8px;
+		font-weight: 700;
+		border-radius: 4px;
+		transition: transform 0.2s ease;
+	}
+
+	.btn:hover {
+		transform: scale(1.05);
 	}
 </style>

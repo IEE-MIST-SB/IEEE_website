@@ -1,29 +1,70 @@
 ---
+import { withBase } from '../utils/paths';
+import type { MissionItem, Stat } from '../data/chapterCopy';
+
 interface Props {
+	slug: string;
 	code: string;
 	about: string[];
 	mission: string[];
+	missionItems?: MissionItem[];
 	vision?: string;
+	stats?: Stat[];
 	accent: string;
+	accent2?: string;
 }
 
-const { code, about, mission, vision, accent } = Astro.props;
-const hasMission = mission.length > 0 || vision;
+const { slug, code, about, mission, missionItems, vision, stats, accent, accent2 = accent } = Astro.props;
+const hasMission = mission.length > 0 || (missionItems && missionItems.length > 0) || vision;
+const iconColors = [accent, accent2];
 ---
 
-<section class="about" id="about" style={`--accent:${accent}`}>
+<section class="about" id="about" style={`--accent:${accent}; --accent2:${accent2}`}>
 	<div class="container grid">
 		<div class="col">
 			<h2>About IEEE {code} MIST</h2>
 			<div class="quote">
 				{about.map((paragraph) => <p>{paragraph}</p>)}
 			</div>
+
+			{
+				stats && stats.length > 0 && (
+					<div class="stats">
+						{stats.map((stat, i) => (
+							<div class="stat" style={`--stat-color:${iconColors[i % iconColors.length]}`}>
+								<div class="value">{stat.value}</div>
+								<div class="label">{stat.label}</div>
+							</div>
+						))}
+					</div>
+				)
+			}
 		</div>
 
 		{
 			hasMission && (
 				<div class="col">
 					<h2>Our Mission</h2>
+
+					{missionItems && missionItems.length > 0 && (
+						<ul class="mission-items">
+							{missionItems.map((item, i) => (
+								<li style={`--item-color:${iconColors[i % iconColors.length]}`}>
+									<span class="icon-chip">
+										<span
+											class="icon"
+											style={`--icon-url:url(${JSON.stringify(withBase(`images/chapters/${slug}/icon-mission-${item.icon}.svg`))})`}
+										/>
+									</span>
+									<div>
+										<h4>{item.title}</h4>
+										<p>{item.description}</p>
+									</div>
+								</li>
+							))}
+						</ul>
+					)}
+
 					{mission.length > 0 && (
 						<ul class="points">
 							{mission.map((point) => (
@@ -31,6 +72,7 @@ const hasMission = mission.length > 0 || vision;
 							))}
 						</ul>
 					)}
+
 					{vision && (
 						<div class="vision">
 							<h3>Our Vision</h3>
@@ -46,7 +88,7 @@ const hasMission = mission.length > 0 || vision;
 <style>
 	.about {
 		background: #fff;
-		padding: 96px 0;
+		padding: 32px 0;
 	}
 
 	.grid {
@@ -58,8 +100,9 @@ const hasMission = mission.length > 0 || vision;
 	.col h2 {
 		font-size: 32px;
 		font-weight: 600;
+		line-height: 40px;
 		color: var(--color-navy);
-		margin-bottom: 24px;
+		margin-bottom: 16px;
 	}
 
 	.quote {
@@ -69,12 +112,96 @@ const hasMission = mission.length > 0 || vision;
 
 	.quote p {
 		font-size: 16px;
-		line-height: 1.6;
+		line-height: 24px;
 		color: var(--color-text-secondary);
 	}
 
 	.quote p + p {
 		margin-top: 16px;
+	}
+
+	.stats {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 16px;
+		padding-top: 16px;
+	}
+
+	.stat {
+		padding: 16px 16px 18px;
+		background: var(--color-bg-alt);
+		border-bottom: 2px solid var(--stat-color);
+		border-radius: 4px;
+	}
+
+	.stat .value {
+		font-size: 24px;
+		font-weight: 600;
+		line-height: 32px;
+		color: var(--stat-color);
+	}
+
+	.stat .label {
+		font-size: 12px;
+		line-height: 16px;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	.mission-items {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.mission-items li {
+		display: flex;
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	.icon-chip {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		border-radius: 12px;
+		background: color-mix(in srgb, var(--item-color) 10%, transparent);
+		margin-top: 4px;
+	}
+
+	.icon-chip .icon {
+		display: block;
+		width: 18px;
+		height: 18px;
+		background-color: var(--item-color);
+		mask-image: var(--icon-url);
+		mask-size: contain;
+		mask-repeat: no-repeat;
+		mask-position: center;
+		-webkit-mask-image: var(--icon-url);
+		-webkit-mask-size: contain;
+		-webkit-mask-repeat: no-repeat;
+		-webkit-mask-position: center;
+	}
+
+	.mission-items h4 {
+		font-size: 20px;
+		font-weight: 500;
+		line-height: 28px;
+		color: var(--color-text);
+		margin-bottom: 2px;
+	}
+
+	.mission-items p {
+		font-size: 16px;
+		line-height: 24px;
+		color: var(--color-text-secondary);
 	}
 
 	.points {

@@ -1,26 +1,65 @@
 ---
 import { withBase } from '../utils/paths';
+import { chapterHeroPattern } from '../data/chapterAvatars';
+import type { HeroHeadline } from '../data/chapterCopy';
 
 interface Props {
+	slug: string;
 	code: string;
 	fullName: string;
+	headline?: HeroHeadline;
 	subtitle: string;
 	accent: string;
+	accent2?: string;
 	logo: string;
+	exploreLabel?: string;
+	eventsLabel?: string;
 }
 
-const { code, fullName, subtitle, accent, logo } = Astro.props;
+const {
+	slug,
+	code,
+	fullName,
+	headline,
+	subtitle,
+	accent,
+	accent2 = accent,
+	logo,
+	exploreLabel = 'Explore Our Impact',
+	eventsLabel = 'Upcoming Events',
+} = Astro.props;
+
+const patternExt = chapterHeroPattern[slug];
+const pattern = patternExt ? withBase(`images/chapters/${slug}/bg-pattern.${patternExt}`) : null;
 ---
 
-<section class="chapter-hero" style={`--accent:${accent}`}>
-	<img src={withBase('images/chapters/eds/bg-pattern.png')} alt="" class="pattern" />
+<section class="chapter-hero" style={`--accent:${accent}; --accent2:${accent2}`}>
+	<div class="bg-layer">
+		{pattern && <img src={pattern} alt="" class="pattern" />}
+	</div>
+	<div class="overlay"></div>
+
 	<div class="container content">
 		<img src={logo} alt={`${code} logo`} class="logo" />
-		<h1>{fullName}</h1>
+		<h1>
+			{
+				headline ? (
+					<>
+						{headline.before}
+						{headline.before && ' '}
+						<span class="highlight">{headline.highlight}</span>
+						{headline.after && ' '}
+						{headline.after}
+					</>
+				) : (
+					fullName
+				)
+			}
+		</h1>
 		<p class="subtitle">{subtitle}</p>
 		<div class="actions">
-			<a href="#about" class="btn btn-primary">Explore Our Impact</a>
-			<a href="#events" class="btn btn-glass">Upcoming Events</a>
+			<a href="#about" class="btn btn-primary">{exploreLabel}</a>
+			<a href="#events" class="btn btn-outline">{eventsLabel}</a>
 		</div>
 	</div>
 </section>
@@ -28,9 +67,16 @@ const { code, fullName, subtitle, accent, logo } = Astro.props;
 <style>
 	.chapter-hero {
 		position: relative;
+		display: flex;
+		align-items: center;
+		height: 600px;
 		overflow: hidden;
-		padding: 80px 0;
-		background: linear-gradient(135deg, var(--color-navy) 0%, #013a72 55%, var(--accent) 220%);
+		background: var(--color-navy);
+	}
+
+	.bg-layer {
+		position: absolute;
+		inset: 0;
 	}
 
 	.pattern {
@@ -39,8 +85,17 @@ const { code, fullName, subtitle, accent, logo } = Astro.props;
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		mix-blend-mode: overlay;
 		opacity: 0.2;
+	}
+
+	.overlay {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			135deg,
+			color-mix(in srgb, var(--color-navy) 90%, transparent) 0%,
+			color-mix(in srgb, var(--accent2) 80%, transparent) 100%
+		);
 	}
 
 	.content {
@@ -48,46 +103,53 @@ const { code, fullName, subtitle, accent, logo } = Astro.props;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		gap: 8px;
 	}
 
 	.logo {
-		height: 72px;
+		height: 96px;
 		width: auto;
-		max-width: 260px;
+		max-width: 300px;
 		object-fit: contain;
 		margin-bottom: 16px;
 	}
 
 	h1 {
-		max-width: 800px;
+		max-width: 768px;
 		font-size: 48px;
 		font-weight: 700;
-		line-height: 1.15;
-		letter-spacing: -0.96px;
+		line-height: 56px;
+		letter-spacing: -0.02em;
 		color: #fff;
+		margin-bottom: 16px;
+	}
+
+	.highlight {
+		color: var(--accent2);
 	}
 
 	.subtitle {
-		max-width: 672px;
-		padding-top: 8px;
+		max-width: 640px;
 		font-size: 18px;
-		line-height: 1.55;
-		color: rgba(255, 255, 255, 0.8);
+		line-height: 28px;
+		color: rgba(255, 255, 255, 0.9);
+		margin-bottom: 32px;
 	}
 
 	.actions {
 		display: flex;
 		gap: 16px;
-		padding-top: 24px;
 	}
 
 	.btn {
 		display: inline-flex;
 		align-items: center;
-		padding: 15px 32px;
+		justify-content: center;
+		padding: 16px 32px;
 		border-radius: 4px;
-		font-size: 16px;
+		font-size: 14px;
+		font-weight: 600;
+		letter-spacing: 0.01em;
+		transition: all 0.25s ease;
 	}
 
 	.btn-primary {
@@ -95,23 +157,39 @@ const { code, fullName, subtitle, accent, logo } = Astro.props;
 		color: #fff;
 	}
 
-	.btn-glass {
-		background: rgba(255, 255, 255, 0.1);
-		backdrop-filter: blur(6px);
-		border: 1px solid rgba(255, 255, 255, 0.3);
+	.btn-primary:hover {
+		background: var(--accent2);
+	}
+
+	.btn-outline {
+		border: 1px solid #fff;
 		color: #fff;
 	}
 
+	.btn-outline:hover {
+		background: #fff;
+		color: var(--color-navy);
+	}
+
+	@media (min-width: 768px) {
+		h1 {
+			font-size: 64px;
+			line-height: 1.1;
+		}
+	}
+
 	@media (max-width: 640px) {
+		.chapter-hero {
+			height: auto;
+			padding: 64px 0;
+		}
 		h1 {
 			font-size: 34px;
+			line-height: 1.2;
 		}
 		.actions {
 			flex-direction: column;
 			width: 100%;
-		}
-		.btn {
-			justify-content: center;
 		}
 	}
 </style>

@@ -14,6 +14,7 @@ import EventCard from '../../components/EventCard.astro';
 import { chapters } from '../../data/chapters';
 import { chapterPanels, associatesForChapter } from '../../data/committee';
 import { chapterCopy } from '../../data/chapterCopy';
+import { chapterExecAvatars, chapterAssociateAvatars, chapterAccent2 } from '../../data/chapterAvatars';
 import { withBase } from '../../utils/paths';
 
 export function getStaticPaths() {
@@ -25,6 +26,7 @@ export function getStaticPaths() {
 
 const { chapter } = Astro.props;
 const copy = chapterCopy[chapter.slug];
+const accent2 = chapterAccent2[chapter.slug] ?? chapter.accent;
 
 const allEvents = await getCollection('events');
 const chapterEvents = allEvents
@@ -32,22 +34,44 @@ const chapterEvents = allEvents
 	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 	.slice(0, 3);
 
-const panel = chapterPanels[chapter.slug] ?? [];
-const associates = associatesForChapter(chapter.slug);
+const execAvatars = chapterExecAvatars[chapter.slug] ?? {};
+const panel = (chapterPanels[chapter.slug] ?? []).map((member) => ({
+	...member,
+	avatar: member.avatar ?? execAvatars[member.name],
+}));
+
+const associateAvatars = chapterAssociateAvatars[chapter.slug] ?? {};
+const associates = associatesForChapter(chapter.slug).map((member) => ({
+	...member,
+	avatar: member.avatar ?? associateAvatars[member.name],
+}));
 ---
 
 <Layout title={`${chapter.code} — ${chapter.fullName} | IEEE MIST`} description={copy.heroSubtitle}>
 	<Header />
 	<main>
 		<ChapterHero
+			slug={chapter.slug}
 			code={chapter.code}
 			fullName={chapter.fullName}
+			headline={copy.heroHeadline}
 			subtitle={copy.heroSubtitle}
 			accent={chapter.accent}
+			accent2={accent2}
 			logo={chapter.logoWhite}
 		/>
 
-		<ChapterAbout code={chapter.code} about={copy.about} mission={copy.mission} vision={copy.vision} accent={chapter.accent} />
+		<ChapterAbout
+			slug={chapter.slug}
+			code={chapter.code}
+			about={copy.about}
+			mission={copy.mission}
+			missionItems={copy.missionItems}
+			vision={copy.vision}
+			stats={copy.stats}
+			accent={chapter.accent}
+			accent2={accent2}
+		/>
 
 		{copy.story && <ChapterStory paragraphs={copy.story} accent={chapter.accent} />}
 
@@ -80,15 +104,15 @@ const associates = associatesForChapter(chapter.slug);
 			</div>
 		</section>
 
-		<ChapterCTA />
+		<ChapterCTA slug={chapter.slug} accent={chapter.accent} />
 	</main>
 	<Footer />
 </Layout>
 
 <style>
 	.events {
-		background: var(--color-bg-alt);
-		padding: 96px 0;
+		background: #fff;
+		padding: 32px 0;
 	}
 
 	.event-grid {
