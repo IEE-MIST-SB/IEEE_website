@@ -8,7 +8,12 @@ const support = ['Contact Support', 'Privacy Policy', 'Terms of Service'];
 <footer class="site-footer">
 	<div class="container top">
 		<div class="brand">
-			<p class="brand-name">IEEE MIST</p>
+			<img
+				class="brand-logo"
+				src={withBase('images/logos/logo-ieee-mist-white.png')}
+				alt="IEEE MIST Student Branch"
+				loading="lazy"
+			/>
 			<p class="blurb">
 				Advancing Technology for the Benefit of Humanity. IEEE MIST Student Branch is the premier
 				technical organization at Military Institute of Science and Technology.
@@ -68,10 +73,9 @@ const support = ['Contact Support', 'Privacy Policy', 'Terms of Service'];
 		padding-bottom: 80px;
 	}
 
-	.brand-name {
-		font-size: 20px;
-		font-weight: 700;
-		color: #fff;
+	.brand-logo {
+		height: 46px;
+		width: auto;
 		margin-bottom: 23px;
 	}
 

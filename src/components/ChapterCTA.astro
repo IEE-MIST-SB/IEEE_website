@@ -5,17 +5,16 @@ import { withBase } from '../utils/paths';
 
 interface Props {
 	slug: string;
-	accent: string;
 }
 
-const { slug, accent } = Astro.props;
+const { slug } = Astro.props;
 
 const pattern = chapterCtaPattern[slug] ? withBase(`images/chapters/${slug}/cta-pattern.png`) : null;
 ---
 
 <section class="cta-wrap">
 	<div class="container">
-		<div class="cta" style={`--accent:${accent}`}>
+		<div class="cta">
 			{pattern && <img src={pattern} alt="" class="pattern" />}
 			<div class="content">
 				<h2>{chapterCta.heading}</h2>
@@ -35,7 +34,7 @@ const pattern = chapterCtaPattern[slug] ? withBase(`images/chapters/${slug}/cta-
 	.cta {
 		position: relative;
 		overflow: hidden;
-		background: var(--accent);
+		background: var(--color-purple);
 		border-radius: 12px;
 		padding: 40px;
 		text-align: center;
@@ -84,7 +83,7 @@ const pattern = chapterCtaPattern[slug] ? withBase(`images/chapters/${slug}/cta-
 		margin-top: 8px;
 		padding: 16px 32px;
 		background: #fff;
-		color: var(--accent);
+		color: var(--color-purple);
 		font-size: 16px;
 		font-weight: 700;
 		border-radius: 4px;

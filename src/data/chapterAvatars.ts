@@ -31,6 +31,7 @@ export const chapterAssociateAvatars: Record<string, Record<string, string>> = {
 /** Chapter-specific secondary accent, for chapters with a two-tone brand (e.g. WIE's purple/pink). */
 export const chapterAccent2: Record<string, string> = {
 	wie: '#E31B79',
+	'mtt-s': '#B87333', // copper, used for the mission checkmarks/badges in the MTT-S design
 };
 
 /**
@@ -45,7 +46,17 @@ export const chapterHeroPattern: Record<string, string> = {
 	wie: 'svg',
 };
 
+/** Chapters with a full-bleed hero background photo instead of (or under) a tiled pattern. */
+export const chapterHeroPhoto: Record<string, string> = {
+	sps: 'images/chapters/sps/hero-bg.png',
+	'mtt-s': 'images/chapters/mtt-s/hero-bg.png',
+};
+
 /** Same idea for the Join CTA section's decorative pattern (cta-pattern.png). */
 export const chapterCtaPattern: Record<string, boolean> = {
 	wie: true,
+	eds: true,
+	aps: true,
+	sps: true,
+	'mtt-s': true,
 };

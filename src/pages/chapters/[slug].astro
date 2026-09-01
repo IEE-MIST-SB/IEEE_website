@@ -54,11 +54,14 @@ const associates = associatesForChapter(chapter.slug).map((member) => ({
 			slug={chapter.slug}
 			code={chapter.code}
 			fullName={chapter.fullName}
+			title={copy.heroTitle}
 			headline={copy.heroHeadline}
+			badge={copy.heroBadge}
 			subtitle={copy.heroSubtitle}
 			accent={chapter.accent}
 			accent2={accent2}
 			logo={chapter.logoWhite}
+			variant={chapter.slug === 'mtt-s' ? 'light' : 'dark'}
 		/>
 
 		<ChapterAbout
@@ -67,13 +70,14 @@ const associates = associatesForChapter(chapter.slug).map((member) => ({
 			about={copy.about}
 			mission={copy.mission}
 			missionItems={copy.missionItems}
+			missionHeading={copy.missionHeading}
 			vision={copy.vision}
 			stats={copy.stats}
 			accent={chapter.accent}
 			accent2={accent2}
 		/>
 
-		{copy.story && <ChapterStory paragraphs={copy.story} accent={chapter.accent} />}
+		<ChapterStory paragraphs={copy.story} accent={chapter.accent} />
 
 		<ChapterExecutiveCommittee code={chapter.code} members={panel} accent={chapter.accent} />
 
@@ -104,7 +108,7 @@ const associates = associatesForChapter(chapter.slug).map((member) => ({
 			</div>
 		</section>
 
-		<ChapterCTA slug={chapter.slug} accent={chapter.accent} />
+		<ChapterCTA slug={chapter.slug} />
 	</main>
 	<Footer />
 </Layout>

@@ -1,0 +1,509 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { executiveCommittee } from '../data/committee';
+import { withBase } from '../utils/paths';
+
+/**
+ * Structure follows the Figma "about us" frame (node 131:2), in its visual order:
+ * Hero -> Stats -> Chair's Message -> Journey timeline -> Mission & Vision -> Values -> CTA.
+ */
+
+// Figma's stat text layers were renamed, so their numbers were not recoverable.
+const stats = [
+	{ value: '000+', label: 'Active Members' },
+	{ value: '00+', label: 'Annual Events' },
+	{ value: '5', label: 'Technical Chapters' },
+	{ value: '2016', label: 'Established' },
+];
+
+const chair = executiveCommittee.find((member) => member.role === 'Chair');
+
+const journey = [
+	{
+		year: '2016',
+		description:
+			'Established with a vision to foster a vibrant community of engineers at MIST, the Student Branch started with just 25 dedicated members.',
+	},
+	{
+		year: '2018',
+		description:
+			'Launched our first technical workshop series and expanded membership to over 150 students across all engineering departments.',
+	},
+	{
+		year: '2021',
+		description:
+			'Honored with the Regional Student Branch Award for outstanding technical activities and community impact during the pandemic.',
+	},
+];
+
+const values = [
+	{
+		title: 'Academic Excellence',
+		description:
+			'Upholding the highest standards of learning and research, encouraging students to excel beyond the classroom.',
+	},
+	{
+		title: 'Technical Innovation',
+		description:
+			'Turning theoretical concepts into practical solutions through hands-on projects and global competitions.',
+	},
+	{
+		title: 'Professional Growth',
+		description:
+			'Cultivating leadership, networking, and soft skills essential for a successful transition into the global workforce.',
+	},
+	{
+		title: 'Social Responsibility',
+		description:
+			'Applying engineering principles to humanitarian causes, ensuring technical progress benefits the broader community.',
+	},
+];
+---
+
+<Layout
+	title="About | IEEE MIST Student Branch"
+	description="The IEEE MIST Student Branch is a hub of technical innovation and professional growth at the Military Institute of Science and Technology."
+>
+	<Header />
+	<main>
+		<section class="hero">
+			<div class="hero-gradient"></div>
+			<div class="container hero-inner">
+				<h1>Advancing Technology for the Betterment of Humanity</h1>
+				<p>
+					The IEEE MIST Student Branch is a hub of technical innovation and professional growth at the
+					Military Institute of Science and Technology. We bridge the gap between academic theory and
+					industry practice.
+				</p>
+			</div>
+		</section>
+
+		<section class="stats-section">
+			<div class="container stats">
+				{
+					stats.map((stat) => (
+						<div class="stat">
+							<p class="value">{stat.value}</p>
+							<p class="label">{stat.label}</p>
+						</div>
+					))
+				}
+			</div>
+		</section>
+
+		<section class="journey">
+			<div class="container journey-inner">
+				<h2>Chair's Message</h2>
+				<span class="rule"></span>
+				<blockquote>
+					&ldquo;Our goal is to foster an environment where technical expertise meets leadership,
+					empowering every student to become a global innovator.&rdquo;
+				</blockquote>
+				<div class="attribution">
+					{
+						chair?.avatar && (
+							<div class="chair-avatar">
+								<img src={chair.avatar} alt={chair.name} />
+							</div>
+						)
+					}
+					<div>
+						<p class="chair-name">{chair?.name ?? 'Chairperson'}</p>
+						<p class="chair-role">Chairperson, IEEE MIST SB</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="timeline-section">
+			<div class="container">
+				<h2>Our Journey</h2>
+				<span class="rule"></span>
+				<ol class="timeline">
+					{
+						journey.map((item) => (
+							<li>
+								<span class="marker" />
+								<div>
+									<p class="year">{item.year}</p>
+									<p class="desc">{item.description}</p>
+								</div>
+							</li>
+						))
+					}
+				</ol>
+			</div>
+		</section>
+
+		<section class="mv" id="mission">
+			<div class="container mv-grid">
+				<div class="mv-card">
+					<h2>Our Vision</h2>
+					<p>
+						To be a globally recognized center of excellence in engineering education and technical
+						leadership, producing graduates who are not just competent engineers but ethical leaders
+						who innovate for the betterment of society.
+					</p>
+				</div>
+				<div class="mv-card">
+					<h2>Our Mission</h2>
+					<p>
+						To provide a platform for MIST students to enhance their technical expertise, develop
+						professional soft skills, and engage in humanitarian engineering projects that address
+						real-world challenges through IEEE's global network.
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="values">
+			<div class="container">
+				<h2>Our Values</h2>
+				<span class="rule"></span>
+				<div class="value-grid">
+					{
+						values.map((value) => (
+							<div class="value-card">
+								<h3>{value.title}</h3>
+								<p>{value.description}</p>
+							</div>
+						))
+					}
+				</div>
+			</div>
+		</section>
+
+		<section class="cta">
+			<div class="container cta-inner">
+				<h2>Become part of IEEE MIST</h2>
+				<p>
+					Join a community of engineers building technical skill, leadership, and a professional
+					network that reaches well beyond campus.
+				</p>
+				<a class="btn" href={withBase('/contact')}>Get in touch</a>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	/* Tokens match the Figma page: #002855 navy, #00629b blue, #f4f4f4 surface,
+	   #414750 body text, #717881 muted, #e6e7e7 border. */
+
+	.hero {
+		position: relative;
+		background: var(--color-navy);
+		padding: 112px 0;
+		overflow: hidden;
+	}
+
+	.hero-gradient {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(135deg, rgba(0, 98, 155, 0.55) 0%, rgba(0, 40, 85, 0) 60%);
+	}
+
+	.hero-inner {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	.hero h1 {
+		max-width: 900px;
+		font-size: 48px;
+		font-weight: 700;
+		line-height: 1.16;
+		letter-spacing: -0.96px;
+		color: #fff;
+	}
+
+	.hero p {
+		max-width: 760px;
+		font-size: 18px;
+		line-height: 1.6;
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	.stats-section {
+		background: #f4f4f4;
+		border-bottom: 1px solid var(--color-border);
+		padding: 48px 0;
+	}
+
+	.stats {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 24px;
+		text-align: center;
+	}
+
+	.stat .value {
+		font-size: 36px;
+		font-weight: 700;
+		letter-spacing: -1px;
+		color: var(--color-blue);
+	}
+
+	.stat .label {
+		margin-top: 6px;
+		font-size: 12px;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	h2 {
+		font-size: 32px;
+		font-weight: 600;
+		line-height: 1.25;
+		color: var(--color-navy);
+	}
+
+	.rule {
+		display: block;
+		width: 64px;
+		height: 4px;
+		margin-top: 16px;
+		background: var(--color-blue);
+	}
+
+	.journey {
+		padding: 88px 0;
+	}
+
+	.journey-inner {
+		display: flex;
+		flex-direction: column;
+	}
+
+	blockquote {
+		max-width: 860px;
+		margin: 40px 0 0;
+		padding-left: 28px;
+		border-left: 4px solid var(--color-blue);
+		font-size: 24px;
+		line-height: 1.55;
+		color: var(--color-text-secondary);
+	}
+
+	.attribution {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		margin-top: 32px;
+	}
+
+	.chair-avatar {
+		width: 64px;
+		height: 64px;
+		border-radius: 50%;
+		overflow: hidden;
+		background: #f4f4f4;
+		flex-shrink: 0;
+	}
+
+	.chair-avatar img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.chair-name {
+		font-size: 16px;
+		font-weight: 700;
+		color: var(--color-navy);
+	}
+
+	.chair-role {
+		margin-top: 2px;
+		font-size: 12px;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	.timeline-section {
+		background: #f4f4f4;
+		padding: 88px 0;
+	}
+
+	.timeline {
+		list-style: none;
+		position: relative;
+		margin: 48px 0 0;
+		padding: 0 0 0 40px;
+		max-width: 860px;
+	}
+
+	.timeline::before {
+		content: '';
+		position: absolute;
+		left: 7px;
+		top: 8px;
+		bottom: 8px;
+		width: 2px;
+		background: linear-gradient(to bottom, var(--color-blue), rgba(0, 98, 155, 0.15));
+	}
+
+	.timeline li {
+		position: relative;
+		padding-bottom: 36px;
+	}
+
+	.timeline li:last-child {
+		padding-bottom: 0;
+	}
+
+	.marker {
+		position: absolute;
+		left: -40px;
+		top: 4px;
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		background: #fff;
+		border: 3px solid var(--color-blue);
+	}
+
+	.timeline .year {
+		font-size: 20px;
+		font-weight: 700;
+		color: var(--color-blue);
+		margin-bottom: 8px;
+	}
+
+	.timeline .desc {
+		font-size: 16px;
+		line-height: 1.65;
+		color: var(--color-text-secondary);
+	}
+
+	.mv {
+		padding: 88px 0;
+		scroll-margin-top: 100px;
+	}
+
+	.mv-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 32px;
+	}
+
+	.mv-card {
+		padding: 36px;
+		background: #f4f4f4;
+		border-bottom: 2px solid var(--color-blue);
+		border-radius: 4px;
+	}
+
+	.mv-card p {
+		margin-top: 20px;
+		font-size: 16px;
+		line-height: 1.7;
+		color: var(--color-text-secondary);
+	}
+
+	.values {
+		background: #f4f4f4;
+		padding: 88px 0;
+	}
+
+	.value-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 24px;
+		margin-top: 48px;
+	}
+
+	.value-card {
+		padding: 28px;
+		background: #fff;
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+	}
+
+	.value-card h3 {
+		font-size: 18px;
+		font-weight: 700;
+		color: var(--color-navy);
+		margin-bottom: 12px;
+	}
+
+	.value-card p {
+		font-size: 14px;
+		line-height: 1.7;
+		color: var(--color-text-secondary);
+	}
+
+	.cta {
+		background: var(--color-navy);
+		padding: 72px 0;
+	}
+
+	.cta-inner {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+		text-align: center;
+	}
+
+	.cta h2 {
+		color: #fff;
+	}
+
+	.cta p {
+		max-width: 640px;
+		font-size: 16px;
+		line-height: 1.7;
+		color: rgba(255, 255, 255, 0.75);
+	}
+
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		margin-top: 8px;
+		padding: 15px 32px;
+		border-radius: 8px;
+		background: var(--color-blue);
+		color: #fff;
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	@media (max-width: 1024px) {
+		.value-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 860px) {
+		.hero {
+			padding: 72px 0;
+		}
+		.hero h1 {
+			font-size: 34px;
+		}
+		.mv-grid {
+			grid-template-columns: 1fr;
+		}
+		.stats {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		blockquote {
+			font-size: 19px;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.value-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

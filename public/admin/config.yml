@@ -1,0 +1,83 @@
+# Decap CMS configuration.
+# Keep this in sync with the `events` schema in src/content.config.ts.
+#
+# TODO before going live:
+#   1. Set `repo` to the real GitHub owner/repo.
+#   2. Set `branch` to the branch the site deploys from.
+#   3. Point `base_url` / `auth_endpoint` at an OAuth proxy (GitHub Pages cannot
+#      host the OAuth backend itself). Netlify Identity or a small Cloudflare
+#      Worker both work — see https://decapcms.org/docs/backends-overview/
+
+backend:
+  name: github
+  repo: IEEE-MIST-WIE/IEEE_website
+  branch: main
+  # base_url: https://your-oauth-proxy.example.com
+  # auth_endpoint: auth
+
+publish_mode: editorial_workflow
+
+media_folder: public/images/events
+public_folder: /images/events
+
+collections:
+  - name: events
+    label: Events
+    label_singular: Event
+    folder: src/content/events
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    summary: '{{title}} — {{chapter}} — {{year}}-{{month}}-{{day}}'
+    sortable_fields: [date, title, chapter]
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: date, label: Date, widget: datetime, format: 'YYYY-MM-DD', time_format: false }
+      - name: chapter
+        label: Chapter
+        widget: select
+        default: SB
+        options:
+          - { label: 'Student Branch (branch-wide)', value: 'SB' }
+          - { label: 'EDS — Electron Devices Society', value: 'EDS' }
+          - { label: 'APS — Antennas and Propagation Society', value: 'APS' }
+          - { label: 'WIE — Women in Engineering', value: 'WIE' }
+          - { label: 'MTT-S — Microwave Theory and Technology Society', value: 'MTT-S' }
+          - { label: 'SPS — Signal Processing Society', value: 'SPS' }
+      - {
+          name: description,
+          label: Short description,
+          widget: text,
+          hint: 'One or two sentences. Shown on event cards and search results.',
+        }
+      - { name: image, label: Cover image, widget: image, required: false }
+      - { name: location, label: Location / venue, widget: string, required: false }
+      - {
+          name: time,
+          label: Time,
+          widget: string,
+          required: false,
+          hint: 'For example: 10:00 AM — 4:00 PM',
+        }
+      - {
+          name: registrationLink,
+          label: Registration link,
+          widget: string,
+          required: false,
+          hint: 'Google Form or other registration URL.',
+        }
+      - {
+          name: featured,
+          label: Feature this event,
+          widget: boolean,
+          default: false,
+          required: false,
+          hint: 'Pins the event to the top of the Events page.',
+        }
+      - { name: tags, label: Tags, widget: list, required: false, default: [] }
+      - {
+          name: body,
+          label: Full details,
+          widget: markdown,
+          required: false,
+          hint: 'The full event description shown on the event page.',
+        }

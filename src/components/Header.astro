@@ -1,41 +1,89 @@
 ---
+import { chapters } from '../data/chapters';
 import { withBase } from '../utils/paths';
 
 const navLinks = [
-	{ label: 'Home', href: withBase('/'), active: true },
-	{ label: 'Chapters', href: withBase('/chapters'), dropdown: true },
+	{ label: 'Home', href: withBase('/') },
+	{
+		label: 'Chapters',
+		href: withBase('/chapters'),
+		children: chapters.map((chapter) => ({
+			label: `${chapter.code} — ${chapter.fullName}`,
+			href: withBase(`/chapters/${chapter.slug}`),
+		})),
+	},
 	{ label: 'Events', href: withBase('/events') },
 	{ label: 'About', href: withBase('/about') },
 	{ label: 'Contact', href: withBase('/contact') },
 	{ label: 'Legacy', href: withBase('/legacy') },
 ];
+
+const normalize = (path: string) => (path !== '/' && path.endsWith('/') ? path.slice(0, -1) : path);
+const current = normalize(Astro.url.pathname);
+const home = normalize(withBase('/'));
+
+function isActive(href: string): boolean {
+	const target = normalize(href);
+	if (target === home) return current === home;
+	return current === target || current.startsWith(`${target}/`);
+}
 ---
 
 <header class="site-header">
 	<div class="container bar">
 		<a href={withBase('/')} class="logo">
-			<img src={withBase('images/home/logo-ieee-mist.png')} alt="IEEE MIST" />
+			<img src={withBase('images/logos/logo-ieee-mist-white.png')} alt="IEEE MIST Student Branch" />
 		</a>
 
-		<nav class="nav">
+		<nav class="nav" id="primary-nav">
 			{
-				navLinks.map((link) => (
-					<a href={link.href} class:list={['nav-link', { active: link.active, dropdown: link.dropdown }]}>
-						{link.label}
-						{link.dropdown && (
-							<img src={withBase('images/home/icon-chevron-down.svg')} alt="" class="chevron" />
-						)}
-					</a>
-				))
+				navLinks.map((link) =>
+					link.children ? (
+						<div class="has-dropdown">
+							<a href={link.href} class:list={['nav-link', 'dropdown', { active: isActive(link.href) }]}>
+								{link.label}
+								<img src={withBase('images/home/icon-chevron-down.svg')} alt="" class="chevron" />
+							</a>
+							<div class="dropdown-menu">
+								{link.children.map((child) => (
+									<a href={child.href}>{child.label}</a>
+								))}
+								<a href={link.href} class="all">All chapters</a>
+							</div>
+						</div>
+					) : (
+						<a href={link.href} class:list={['nav-link', { active: isActive(link.href) }]}>
+							{link.label}
+						</a>
+					)
+				)
 			}
 		</nav>
 
-		<div class="search">
-			<img src={withBase('images/home/icon-search.svg')} alt="" class="search-icon" />
-			<input type="search" placeholder="Search..." aria-label="Search" />
+		<div class="right">
+			<div class="search">
+				<img src={withBase('images/home/icon-search.svg')} alt="" class="search-icon" />
+				<input type="search" placeholder="Search..." aria-label="Search" />
+			</div>
+
+			<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation">
+				<span></span>
+				<span></span>
+				<span></span>
+			</button>
 		</div>
 	</div>
 </header>
+
+<script>
+	const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+	const header = document.querySelector<HTMLElement>('.site-header');
+
+	toggle?.addEventListener('click', () => {
+		const open = header?.classList.toggle('nav-open') ?? false;
+		toggle.setAttribute('aria-expanded', String(open));
+	});
+</script>
 
 <style>
 	.site-header {
@@ -56,7 +104,7 @@ const navLinks = [
 	}
 
 	.logo img {
-		height: 56px;
+		height: 44px;
 		width: auto;
 	}
 
@@ -74,17 +122,78 @@ const navLinks = [
 		color: rgba(255, 255, 255, 0.8);
 		padding-bottom: 6px;
 		white-space: nowrap;
+		border-bottom: 2px solid transparent;
+	}
+
+	.nav-link:hover {
+		color: #fff;
 	}
 
 	.nav-link.active {
 		font-weight: 700;
-		color: rgba(255, 255, 255, 0.8);
-		border-bottom: 2px solid #fff;
+		color: #fff;
+		border-bottom-color: #fff;
 	}
 
 	.nav-link .chevron {
 		width: 7px;
 		height: 4.3px;
+	}
+
+	.has-dropdown {
+		position: relative;
+	}
+
+	.dropdown-menu {
+		position: absolute;
+		top: 100%;
+		left: -16px;
+		min-width: 300px;
+		padding: 8px;
+		margin-top: 12px;
+		background: #fff;
+		border: 1px solid var(--color-border);
+		border-radius: 12px;
+		box-shadow: 0 24px 48px -24px rgba(0, 40, 85, 0.5);
+		display: flex;
+		flex-direction: column;
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(-6px);
+		transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+	}
+
+	.has-dropdown:hover .dropdown-menu,
+	.has-dropdown:focus-within .dropdown-menu {
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
+	}
+
+	.dropdown-menu a {
+		padding: 10px 14px;
+		border-radius: 8px;
+		font-size: 14px;
+		color: var(--color-text-secondary);
+	}
+
+	.dropdown-menu a:hover {
+		background: var(--color-bg-alt);
+		color: var(--color-navy);
+	}
+
+	.dropdown-menu .all {
+		margin-top: 4px;
+		border-top: 1px solid var(--color-border);
+		border-radius: 0 0 8px 8px;
+		font-weight: 600;
+		color: var(--color-blue);
+	}
+
+	.right {
+		display: flex;
+		align-items: center;
+		gap: 16px;
 	}
 
 	.search {
@@ -116,9 +225,97 @@ const navLinks = [
 		color: rgba(255, 255, 255, 0.4);
 	}
 
-	@media (max-width: 900px) {
+	.menu-toggle {
+		display: none;
+		flex-direction: column;
+		justify-content: center;
+		gap: 5px;
+		width: 40px;
+		height: 40px;
+		padding: 0;
+		background: rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 10px;
+	}
+
+	.menu-toggle span {
+		display: block;
+		width: 18px;
+		height: 2px;
+		margin: 0 auto;
+		background: #fff;
+		border-radius: 2px;
+	}
+
+	@media (max-width: 1024px) {
+		.search input {
+			width: 92px;
+		}
 		.nav {
+			gap: 20px;
+		}
+	}
+
+	@media (max-width: 900px) {
+		.menu-toggle {
+			display: flex;
+		}
+
+		.search {
 			display: none;
+		}
+
+		.nav {
+			position: absolute;
+			top: 80px;
+			left: 0;
+			right: 0;
+			display: none;
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0;
+			padding: 8px 24px 20px;
+			background: var(--color-blue);
+			border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+		}
+
+		.site-header.nav-open .nav {
+			display: flex;
+		}
+
+		.nav-link {
+			padding: 14px 0;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+		}
+
+		.nav-link.active {
+			border-bottom-color: rgba(255, 255, 255, 0.12);
+		}
+
+		.dropdown-menu {
+			position: static;
+			min-width: 0;
+			margin: 0 0 8px;
+			opacity: 1;
+			visibility: visible;
+			transform: none;
+			background: rgba(255, 255, 255, 0.06);
+			border: none;
+			box-shadow: none;
+		}
+
+		.dropdown-menu a {
+			color: rgba(255, 255, 255, 0.75);
+		}
+
+		.dropdown-menu a:hover {
+			background: rgba(255, 255, 255, 0.1);
+			color: #fff;
+		}
+
+		.dropdown-menu .all {
+			border-top-color: rgba(255, 255, 255, 0.15);
+			color: #fff;
 		}
 	}
 </style>

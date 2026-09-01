@@ -1,0 +1,428 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { withBase } from '../utils/paths';
+
+/**
+ * Structure follows the Figma "Contact Us - IEEE MIST Student Branch" frame
+ * (node 31:2622): Hero -> [Contact Form | Contact Information & Map] -> FAQ.
+ */
+
+const subjects = [
+	'General Inquiry',
+	'Membership',
+	'Event or workshop',
+	'Collaboration / sponsorship',
+	'Chapter enquiry',
+];
+
+const socials = [
+	{ label: 'Facebook', href: 'https://www.facebook.com' },
+	{ label: 'LinkedIn', href: 'https://www.linkedin.com' },
+	{ label: 'Instagram', href: 'https://www.instagram.com' },
+	{ label: 'YouTube', href: 'https://www.youtube.com' },
+];
+
+// Figma's FAQ text layers were renamed, so this copy is not from the design.
+const faqs = [
+	{
+		question: 'Who can join the IEEE MIST Student Branch?',
+		answer:
+			'Placeholder — describe eligibility: which departments, which years, and whether an IEEE membership number is required first.',
+	},
+	{
+		question: 'How much does membership cost?',
+		answer: 'Placeholder — state the current IEEE student membership fee and any branch fee.',
+	},
+	{
+		question: 'Can I join more than one chapter?',
+		answer: 'Placeholder — explain whether members can hold membership in multiple chapters.',
+	},
+	{
+		question: 'How do I propose an event or collaboration?',
+		answer:
+			'Placeholder — describe the process and expected notice period for proposing an event with the branch.',
+	},
+];
+---
+
+<Layout
+	title="Contact | IEEE MIST Student Branch"
+	description="Connect with the IEEE MIST Student Branch — membership, collaborations, event proposals, and general enquiries."
+>
+	<Header />
+	<main>
+		<section class="hero">
+			<div class="container">
+				<h1>Connect with IEEE MIST</h1>
+				<p>
+					Questions about membership, an event, or a collaboration? Send us a message and the right
+					person on the committee will get back to you.
+				</p>
+			</div>
+		</section>
+
+		<section class="main-grid-section">
+			<div class="container main-grid">
+				<div class="form-card">
+					<h2>Send us a message</h2>
+
+					<p class="endpoint-note">
+						This form has no endpoint yet — set the <code>action</code> below to your Google Form or
+						Formspree URL before launch.
+					</p>
+
+					<form class="contact-form" action="#" method="post">
+						<label>
+							<span>Full name</span>
+							<input type="text" name="name" required placeholder="John Doe" />
+						</label>
+
+						<label>
+							<span>Email address</span>
+							<input type="email" name="email" required placeholder="john@example.com" />
+						</label>
+
+						<label>
+							<span>Subject</span>
+							<select name="subject">
+								{subjects.map((subject) => <option value={subject}>{subject}</option>)}
+							</select>
+						</label>
+
+						<label>
+							<span>Message</span>
+							<textarea name="message" rows="6" required placeholder="How can we help you today?"
+							></textarea>
+						</label>
+
+						<button type="submit" class="btn">Send message</button>
+					</form>
+				</div>
+
+				<aside class="info-card">
+					<h2>Contact Information</h2>
+
+					<dl class="info-list">
+						<div>
+							<dt>Address</dt>
+							<dd>
+								IEEE MIST Student Branch<br />
+								Military Institute of Science and Technology<br />
+								Mirpur Cantonment, Dhaka-1216, Bangladesh
+							</dd>
+						</div>
+						<div>
+							<dt>Email</dt>
+							<dd><a href="mailto:info@ieeemist.org">info@ieeemist.org</a></dd>
+						</div>
+						<div>
+							<dt>Office hours</dt>
+							<dd>Sunday — Thursday, 10:00 AM to 4:00 PM</dd>
+						</div>
+					</dl>
+
+					<div class="map">
+						<img
+							src={withBase('images/home/map-location.png')}
+							alt="Map showing the IEEE MIST location"
+							loading="lazy"
+						/>
+					</div>
+
+					<p class="follow-label">Follow our updates</p>
+					<div class="socials">
+						{
+							socials.map((social) => (
+								<a href={social.href} target="_blank" rel="noopener noreferrer">
+									{social.label}
+								</a>
+							))
+						}
+					</div>
+				</aside>
+			</div>
+		</section>
+
+		<section class="faq">
+			<div class="container">
+				<h2>Frequently Asked Questions</h2>
+				<span class="rule"></span>
+				<div class="faq-list">
+					{
+						faqs.map((faq) => (
+							<details>
+								<summary>{faq.question}</summary>
+								<p>{faq.answer}</p>
+							</details>
+						))
+					}
+				</div>
+			</div>
+		</section>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.hero {
+		background: var(--color-navy);
+		padding: 72px 0;
+	}
+
+	.hero h1 {
+		font-size: 44px;
+		font-weight: 700;
+		letter-spacing: -0.88px;
+		color: #fff;
+		margin-bottom: 16px;
+	}
+
+	.hero p {
+		max-width: 660px;
+		font-size: 18px;
+		line-height: 1.6;
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	.main-grid-section {
+		padding: 72px 0;
+	}
+
+	.main-grid {
+		display: grid;
+		grid-template-columns: 1.35fr 1fr;
+		gap: 32px;
+		align-items: start;
+	}
+
+	h2 {
+		font-size: 26px;
+		font-weight: 600;
+		color: var(--color-navy);
+	}
+
+	.form-card,
+	.info-card {
+		padding: 36px;
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+		background: #fff;
+	}
+
+	.info-card {
+		background: #f4f4f4;
+	}
+
+	.endpoint-note {
+		margin: 20px 0 28px;
+		padding: 12px 16px;
+		border-left: 3px solid var(--color-blue);
+		background: #f4f4f4;
+		font-size: 13px;
+		line-height: 1.6;
+		color: var(--color-text-secondary);
+	}
+
+	.endpoint-note code {
+		padding: 1px 5px;
+		border-radius: 3px;
+		background: rgba(0, 98, 155, 0.1);
+		font-size: 12px;
+	}
+
+	.contact-form {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	label {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	label span {
+		font-size: 11px;
+		font-weight: 800;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	input,
+	select,
+	textarea {
+		padding: 14px 16px;
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+		background: #fff;
+		font-size: 15px;
+		font-family: var(--font-sans);
+		color: var(--color-text);
+	}
+
+	input:focus,
+	select:focus,
+	textarea:focus {
+		outline: 2px solid rgba(0, 98, 155, 0.3);
+		border-color: var(--color-blue);
+	}
+
+	textarea {
+		resize: vertical;
+	}
+
+	.btn {
+		align-self: flex-start;
+		padding: 15px 34px;
+		border: none;
+		border-radius: 4px;
+		background: var(--color-blue);
+		color: #fff;
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	.info-list {
+		margin: 24px 0 28px;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.info-list dt {
+		font-size: 11px;
+		font-weight: 800;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+		margin-bottom: 6px;
+	}
+
+	.info-list dd {
+		margin: 0;
+		font-size: 15px;
+		line-height: 1.65;
+		color: var(--color-text-secondary);
+	}
+
+	.info-list a {
+		color: var(--color-blue);
+	}
+
+	.info-list a:hover {
+		text-decoration: underline;
+	}
+
+	.map {
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+		overflow: hidden;
+		margin-bottom: 28px;
+	}
+
+	.map img {
+		width: 100%;
+	}
+
+	.follow-label {
+		font-size: 11px;
+		font-weight: 800;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+		margin-bottom: 14px;
+	}
+
+	.socials {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	.socials a {
+		padding: 8px 16px;
+		border: 1px solid var(--color-border);
+		border-radius: 999px;
+		background: #fff;
+		font-size: 14px;
+		color: var(--color-text-secondary);
+	}
+
+	.socials a:hover {
+		border-color: var(--color-blue);
+		color: var(--color-blue);
+	}
+
+	.faq {
+		background: #f4f4f4;
+		padding: 80px 0 96px;
+	}
+
+	.rule {
+		display: block;
+		width: 64px;
+		height: 4px;
+		margin: 16px 0 40px;
+		background: var(--color-blue);
+	}
+
+	.faq-list {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		max-width: 900px;
+	}
+
+	details {
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+		background: #fff;
+		overflow: hidden;
+	}
+
+	summary {
+		padding: 18px 22px;
+		font-size: 16px;
+		font-weight: 600;
+		color: var(--color-navy);
+		cursor: pointer;
+		list-style: none;
+	}
+
+	summary::-webkit-details-marker {
+		display: none;
+	}
+
+	summary::after {
+		content: '+';
+		float: right;
+		font-size: 20px;
+		font-weight: 400;
+		line-height: 1;
+		color: var(--color-blue);
+	}
+
+	details[open] summary::after {
+		content: '\2212';
+	}
+
+	details p {
+		padding: 0 22px 20px;
+		font-size: 15px;
+		line-height: 1.75;
+		color: var(--color-text-secondary);
+	}
+
+	@media (max-width: 900px) {
+		.main-grid {
+			grid-template-columns: 1fr;
+		}
+		.hero h1 {
+			font-size: 32px;
+		}
+	}
+</style>

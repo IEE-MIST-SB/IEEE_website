@@ -8,13 +8,15 @@ interface Props {
 	about: string[];
 	mission: string[];
 	missionItems?: MissionItem[];
+	missionHeading?: string;
 	vision?: string;
 	stats?: Stat[];
 	accent: string;
 	accent2?: string;
 }
 
-const { slug, code, about, mission, missionItems, vision, stats, accent, accent2 = accent } = Astro.props;
+const { slug, code, about, mission, missionItems, missionHeading = 'Our Mission', vision, stats, accent, accent2 = accent } =
+	Astro.props;
 const hasMission = mission.length > 0 || (missionItems && missionItems.length > 0) || vision;
 const iconColors = [accent, accent2];
 ---
@@ -44,7 +46,7 @@ const iconColors = [accent, accent2];
 		{
 			hasMission && (
 				<div class="col">
-					<h2>Our Mission</h2>
+					<h2>{missionHeading}</h2>
 
 					{missionItems && missionItems.length > 0 && (
 						<ul class="mission-items">

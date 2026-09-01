@@ -1,0 +1,121 @@
+---
+import { withBase } from '../utils/paths';
+
+interface Crumb {
+	label: string;
+	href?: string;
+}
+
+interface Props {
+	eyebrow?: string;
+	title: string;
+	subtitle?: string;
+	crumbs?: Crumb[];
+	accent?: string;
+}
+
+const { eyebrow, title, subtitle, crumbs = [], accent } = Astro.props;
+---
+
+<section class="page-hero" style={accent ? `--accent:${accent}` : undefined}>
+	<div class="container inner">
+		{
+			crumbs.length > 0 && (
+				<nav class="crumbs" aria-label="Breadcrumb">
+					<a href={withBase('/')}>Home</a>
+					{crumbs.map((crumb) => (
+						<>
+							<span class="sep">/</span>
+							{crumb.href ? <a href={crumb.href}>{crumb.label}</a> : <span aria-current="page">{crumb.label}</span>}
+						</>
+					))}
+				</nav>
+			)
+		}
+		{eyebrow && <p class="eyebrow">{eyebrow}</p>}
+		<h1>{title}</h1>
+		{subtitle && <p class="subtitle">{subtitle}</p>}
+		<slot />
+	</div>
+</section>
+
+<style>
+	.page-hero {
+		--accent: var(--color-blue);
+		position: relative;
+		background: linear-gradient(135deg, var(--color-navy) 0%, #013a72 55%, var(--accent) 160%);
+		padding: 72px 0 80px;
+		overflow: hidden;
+	}
+
+	.page-hero::after {
+		content: '';
+		position: absolute;
+		right: -120px;
+		top: -120px;
+		width: 420px;
+		height: 420px;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, 0.05);
+	}
+
+	.inner {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	.crumbs {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+		font-size: 13px;
+		color: rgba(255, 255, 255, 0.6);
+		margin-bottom: 8px;
+	}
+
+	.crumbs a:hover {
+		color: #fff;
+		text-decoration: underline;
+	}
+
+	.sep {
+		color: rgba(255, 255, 255, 0.3);
+	}
+
+	.eyebrow {
+		font-size: 11px;
+		font-weight: 900;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.6);
+	}
+
+	h1 {
+		max-width: 860px;
+		font-size: 44px;
+		font-weight: 800;
+		line-height: 1.12;
+		letter-spacing: -1px;
+		color: #fff;
+	}
+
+	.subtitle {
+		max-width: 680px;
+		font-size: 18px;
+		line-height: 1.6;
+		color: rgba(255, 255, 255, 0.75);
+	}
+
+	@media (max-width: 640px) {
+		h1 {
+			font-size: 32px;
+		}
+		.subtitle {
+			font-size: 16px;
+		}
+	}
+</style>

@@ -4,16 +4,21 @@ import { withBase } from '../utils/paths';
 interface Props {
 	paragraphs: string[];
 	accent: string;
+	image?: string;
 }
 
-const { paragraphs, accent } = Astro.props;
+const { paragraphs, accent, image } = Astro.props;
 ---
 
 <section class="story" style={`--accent:${accent}`}>
-	<div class="container grid">
-		<div class="photo">
-			<img src={withBase('images/chapters/eds/story-photo.png')} alt="" />
-		</div>
+	<div class="container grid" class:list={{ 'no-image': !image }}>
+		{
+			image && (
+				<div class="photo">
+					<img src={withBase(image)} alt="" />
+				</div>
+			)
+		}
 		<div class="text">
 			<h2>Our Story</h2>
 			<span class="underline"></span>
@@ -25,7 +30,7 @@ const { paragraphs, accent } = Astro.props;
 <style>
 	.story {
 		background: var(--color-bg-alt);
-		padding: 96px 0;
+		padding: 32px 0;
 	}
 
 	.grid {
@@ -33,6 +38,12 @@ const { paragraphs, accent } = Astro.props;
 		grid-template-columns: 389px 1fr;
 		gap: 48px;
 		align-items: center;
+	}
+
+	.grid.no-image {
+		grid-template-columns: 1fr;
+		max-width: 800px;
+		margin: 0 auto;
 	}
 
 	.photo {
@@ -62,6 +73,15 @@ const { paragraphs, accent } = Astro.props;
 		height: 4px;
 		margin: 16px 0 24px;
 		background: var(--accent);
+	}
+
+	.grid.no-image .underline {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.grid.no-image .text {
+		text-align: center;
 	}
 
 	.text p {

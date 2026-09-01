@@ -27,15 +27,42 @@ No Git commands, no code editing, no manual deployment — just fill and publish
 /
 ├── src/
 │   ├── content/
-│   │   └── events/        # Event Markdown files (managed via Decap CMS)
-│   ├── pages/              # Site pages (home, events, about, etc.)
-│   ├── components/         # Reusable Astro/UI components
-│   └── layouts/            # Page layouts
+│   │   └── events/         # Event Markdown files (managed via Decap CMS)
+│   ├── content.config.ts   # Event frontmatter schema
+│   ├── data/
+│   │   ├── chapters.ts     # Chapter names, logos, colours, contacts
+│   │   └── committee.ts    # Committee members, past panels, milestones, awards
+│   ├── pages/              # Site pages (see the route table below)
+│   ├── components/         # Reusable Astro components
+│   ├── layouts/            # Page layouts
+│   └── utils/              # Path + date helpers
 ├── public/
-│   └── admin/               # Decap CMS config (config.yml + index.html)
+│   ├── admin/              # Decap CMS config (config.yml + index.html)
+│   └── images/             # Static images
 ├── astro.config.mjs
 └── package.json
 ```
+
+## Pages & Where the Content Lives
+
+| Route | File | Content comes from |
+| --- | --- | --- |
+| `/` | `src/pages/index.astro` | Section components + events collection |
+| `/about` | `src/pages/about.astro` | Inline copy + `src/data/committee.ts` |
+| `/chapters` | `src/pages/chapters/index.astro` | `src/data/chapters.ts` |
+| `/chapters/<slug>` | `src/pages/chapters/[slug].astro` | `src/data/chapters.ts` + events collection |
+| `/events` | `src/pages/events/index.astro` | Events collection |
+| `/events/<slug>` | `src/pages/events/[...slug].astro` | Events collection |
+| `/contact` | `src/pages/contact.astro` | Inline copy + `src/data/chapters.ts` |
+| `/legacy` | `src/pages/legacy.astro` | `src/data/committee.ts` |
+| 404 | `src/pages/404.astro` | Inline copy |
+
+Text marked `Placeholder — …` is waiting for real copy. Committee names, chapter
+details, milestones, and awards live in `src/data/` so they only need editing in
+one place; events are Markdown files and should be added through `/admin`.
+
+The contact form in `src/pages/contact.astro` has a placeholder `action` — point it
+at a Google Form or Formspree endpoint before launch.
 
 ## Event Frontmatter Schema
 
@@ -44,11 +71,14 @@ Each event is a Markdown file with the following frontmatter fields:
 ```yaml
 title: "Event Title"
 date: 2026-08-23
-chapter: "WIE"   # WIE | CS | RAS | PES
+chapter: "WIE"        # SB | EDS | APS | WIE | MTT-S | SPS
 description: "Short description of the event"
-image: "/images/events/example.jpg"
-location: "MIST Auditorium"
-registrationLink: "https://forms.gle/xxxxxxx"
+image: "/images/events/example.jpg"   # optional
+location: "MIST Auditorium"           # optional
+time: "10:00 AM — 4:00 PM"            # optional
+registrationLink: "https://forms.gle/xxxxxxx"  # optional
+featured: false        # pins the event to the top of /events
+tags: ["Workshop"]     # optional
 ```
 
 ## Local Development (for devs)

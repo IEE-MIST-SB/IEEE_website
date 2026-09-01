@@ -1,0 +1,392 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import EventCard from '../../components/EventCard.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import { chapters } from '../../data/chapters';
+import { formatLongDate, isPast } from '../../utils/date';
+import { withBase } from '../../utils/paths';
+
+export async function getStaticPaths() {
+	const events = await getCollection('events');
+	return events.map((event) => ({
+		params: { slug: event.id },
+		props: { event },
+	}));
+}
+
+interface Props {
+	event: CollectionEntry<'events'>;
+}
+
+const { event } = Astro.props;
+const { Content } = await render(event);
+
+const chapter = chapters.find((item) => item.shortName === event.data.chapter);
+const past = isPast(event.data.date);
+
+const related = (await getCollection('events'))
+	.filter((item) => item.id !== event.id && item.data.chapter === event.data.chapter)
+	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+	.slice(0, 3);
+---
+
+<Layout title={`${event.data.title} | IEEE MIST`} description={event.data.description}>
+	<Header />
+	<main>
+		<PageHero
+			eyebrow={chapter ? `${chapter.code} · ${chapter.fullName}` : 'IEEE MIST Student Branch'}
+			title={event.data.title}
+			subtitle={event.data.description}
+			accent={chapter?.accent}
+			crumbs={[{ label: 'Events', href: withBase('/events') }, { label: event.data.title }]}
+		/>
+
+		<section class="detail">
+			<div class="container detail-grid">
+				<article class="content">
+					{
+						event.data.image && (
+							<div class="cover">
+								<img src={withBase(event.data.image)} alt="" />
+							</div>
+						)
+					}
+
+					{
+						event.data.tags.length > 0 && (
+							<ul class="tags">
+								{event.data.tags.map((tag) => (
+									<li>{tag}</li>
+								))}
+							</ul>
+						)
+					}
+
+					<div class="prose">
+						<Content />
+					</div>
+				</article>
+
+				<aside class="sidebar">
+					<div class="card">
+						<p class="card-title">{past ? 'Event Details' : 'Registration'}</p>
+						<dl>
+							<div><dt>Date</dt><dd>{formatLongDate(event.data.date)}</dd></div>
+							{event.data.time && <div><dt>Time</dt><dd>{event.data.time}</dd></div>}
+							{event.data.location && <div><dt>Venue</dt><dd>{event.data.location}</dd></div>}
+							<div><dt>Organised by</dt><dd>{chapter ? chapter.fullName : 'IEEE MIST Student Branch'}</dd></div>
+						</dl>
+
+						{
+							past ? (
+								<p class="closed">This event has already taken place.</p>
+							) : event.data.registrationLink ? (
+								<a
+									class="btn"
+									href={event.data.registrationLink}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									Register now
+								</a>
+							) : (
+								<p class="closed">Registration details will be announced soon.</p>
+							)
+						}
+					</div>
+
+					{
+						chapter && (
+							<a
+								class="chapter-card"
+								href={withBase(`/chapters/${chapter.slug}`)}
+								style={`--accent:${chapter.accent}`}
+							>
+								<span class="card-logo">
+									<img src={chapter.logoWhite} alt="" loading="lazy" />
+								</span>
+								<span class="card-text">
+									<strong>{chapter.code}</strong>
+									{chapter.fullName}
+								</span>
+							</a>
+						)
+					}
+
+					<a class="back" href={withBase('/events')}>← Back to all events</a>
+				</aside>
+			</div>
+		</section>
+
+		{
+			related.length > 0 && (
+				<section class="related">
+					<div class="container">
+						<h2>More from {chapter ? chapter.code : 'the branch'}</h2>
+						<div class="event-grid">
+							{related.map((item) => (
+								<EventCard
+									title={item.data.title}
+									date={item.data.date}
+									chapter={item.data.chapter}
+									description={item.data.description}
+									image={item.data.image}
+									location={item.data.location}
+									href={withBase(`/events/${item.id}`)}
+									past={isPast(item.data.date)}
+								/>
+							))}
+						</div>
+					</div>
+				</section>
+			)
+		}
+
+		<Newsletter />
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.detail {
+		padding: 72px 0;
+	}
+
+	.detail-grid {
+		display: grid;
+		grid-template-columns: 1.7fr 1fr;
+		gap: 56px;
+		align-items: start;
+	}
+
+	.cover {
+		border-radius: 16px;
+		overflow: hidden;
+		margin-bottom: 28px;
+	}
+
+	.cover img {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+	}
+
+	.tags {
+		list-style: none;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin: 0 0 24px;
+		padding: 0;
+	}
+
+	.tags li {
+		padding: 5px 14px;
+		border-radius: 999px;
+		background: var(--color-bg-alt);
+		font-size: 12px;
+		letter-spacing: 0.5px;
+		color: var(--color-text-secondary);
+	}
+
+	.prose :global(h2) {
+		margin: 36px 0 14px;
+		font-size: 24px;
+		font-weight: 700;
+		color: var(--color-navy);
+	}
+
+	.prose :global(h2:first-child) {
+		margin-top: 0;
+	}
+
+	.prose :global(h3) {
+		margin: 28px 0 12px;
+		font-size: 19px;
+		font-weight: 700;
+		color: var(--color-navy);
+	}
+
+	.prose :global(p) {
+		margin-bottom: 18px;
+		font-size: 16px;
+		line-height: 1.8;
+		color: var(--color-text-secondary);
+	}
+
+	.prose :global(ul),
+	.prose :global(ol) {
+		margin: 0 0 20px;
+		padding-left: 22px;
+		color: var(--color-text-secondary);
+	}
+
+	.prose :global(li) {
+		margin-bottom: 10px;
+		font-size: 16px;
+		line-height: 1.7;
+	}
+
+	.prose :global(a) {
+		color: var(--color-blue);
+		text-decoration: underline;
+	}
+
+	.prose :global(img) {
+		border-radius: 12px;
+		margin: 20px 0;
+	}
+
+	.sidebar {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		position: sticky;
+		top: 104px;
+	}
+
+	.card {
+		padding: 28px;
+		border: 1px solid var(--color-border);
+		border-radius: 18px;
+		background: var(--color-bg-alt);
+	}
+
+	.card-title {
+		font-size: 11px;
+		font-weight: 900;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		color: var(--color-blue);
+		margin-bottom: 20px;
+	}
+
+	.card dl {
+		margin: 0 0 24px;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.card dt {
+		font-size: 11px;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	.card dd {
+		margin: 4px 0 0;
+		font-size: 15px;
+		font-weight: 600;
+		color: var(--color-navy);
+	}
+
+	.btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 15px 28px;
+		border-radius: 8px;
+		background: var(--color-blue);
+		color: #fff;
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	.closed {
+		font-size: 14px;
+		line-height: 1.6;
+		color: var(--color-text-muted);
+	}
+
+	.chapter-card {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		padding: 18px;
+		border: 1px solid var(--color-border);
+		border-radius: 16px;
+	}
+
+	.card-logo {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 56px;
+		height: 56px;
+		padding: 11px;
+		border-radius: 12px;
+		background: linear-gradient(140deg, var(--color-navy) 0%, var(--accent) 210%);
+		flex-shrink: 0;
+	}
+
+	.card-logo img {
+		max-width: 100%;
+		max-height: 100%;
+		object-fit: contain;
+	}
+
+	.card-text {
+		display: flex;
+		flex-direction: column;
+		font-size: 13px;
+		color: var(--color-text-secondary);
+	}
+
+	.chapter-card strong {
+		font-size: 15px;
+		color: var(--color-navy);
+	}
+
+	.back {
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--color-blue);
+	}
+
+	.related {
+		background: var(--color-bg-alt-2);
+		padding: 80px 0;
+	}
+
+	.related h2 {
+		font-size: 28px;
+		font-weight: 700;
+		color: var(--color-navy);
+		margin-bottom: 36px;
+	}
+
+	.event-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 28px;
+	}
+
+	@media (max-width: 1024px) {
+		.event-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 860px) {
+		.detail-grid {
+			grid-template-columns: 1fr;
+			gap: 36px;
+		}
+		.sidebar {
+			position: static;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.event-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

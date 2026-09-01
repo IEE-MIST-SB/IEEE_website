@@ -1,15 +1,8 @@
 ---
+import { executiveCommittee as members } from '../data/committee';
 import { withBase } from '../utils/paths';
-
-const members = [
-	{ name: 'Munawar Arif Nitol', role: 'Chair', avatar: withBase('images/home/avatar-munawar.png') },
-	{ name: 'Nasiruddin Mahmud Himel', role: 'Vice-Chair', avatar: withBase('images/home/avatar-nasiruddin.png') },
-	{ name: 'Md. Mehedi Hasan Bhuiyan', role: 'General Secretary', avatar: withBase('images/home/avatar-mehedi.png') },
-	{ name: 'Hafsa Khan', role: 'Treasurer', avatar: withBase('images/home/avatar-hafsa.png') },
-	{ name: 'Mahdia Binte Maksud', role: 'Webmaster', avatar: withBase('images/home/avatar-mahdia.png') },
-	{ name: 'Nushaira Monsur Raya', role: 'Visual Co-Ordinator', avatar: withBase('images/home/avatar-nushaira.png') },
-];
 ---
+
 
 <section class="team">
 	<div class="container">
@@ -19,7 +12,7 @@ const members = [
 				<h3 class="subhead">Executive Committee</h3>
 				<p class="tag">The visionaries leading our student branch towards a better future</p>
 			</div>
-			<a href={withBase('/about#committee')} class="directory-link">
+			<a href={withBase('/chapters')} class="directory-link">
 				Full Member Directory
 				<img src={withBase('images/home/icon-external-link.svg')} alt="" />
 			</a>

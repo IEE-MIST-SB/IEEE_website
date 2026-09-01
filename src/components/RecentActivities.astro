@@ -1,4 +1,6 @@
 ---
+import { getCollection } from 'astro:content';
+import { formatBadgeDate } from '../utils/date';
 import { withBase } from '../utils/paths';
 
 const slides = [
@@ -16,11 +18,16 @@ const slides = [
 	},
 ];
 
-const events = [
-	{ month: 'SEP', day: '28', title: 'Workshop on VLSI Design', description: 'Deep dive into cadence tools and…' },
-	{ month: 'SEP', day: '15', title: 'WIE Empowerment Series', description: 'Networking and mentorship for women' },
-	{ month: 'AUG', day: '30', title: 'Cloud Computing Summit', description: 'Exploring AWS and Azure architecture' },
-];
+/** The three most recent events from the content collection (managed in /admin). */
+const events = (await getCollection('events'))
+	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+	.slice(0, 3)
+	.map((event) => ({
+		...formatBadgeDate(event.data.date),
+		title: event.data.title,
+		description: event.data.description,
+		href: withBase(`/events/${event.id}`),
+	}));
 ---
 
 <section class="activities">
@@ -72,7 +79,7 @@ const events = [
 			<div class="event-list">
 				{
 					events.map((event) => (
-						<div class="event-card">
+						<a class="event-card" href={event.href}>
 							<div class="date-badge">
 								<span class="month">{event.month}</span>
 								<span class="day">{event.day}</span>
@@ -81,7 +88,7 @@ const events = [
 								<p class="title">{event.title}</p>
 								<p class="desc">{event.description}</p>
 							</div>
-						</div>
+						</a>
 					))
 				}
 				<a href={withBase('/events')} class="browse-btn">Browse All Past Events</a>
