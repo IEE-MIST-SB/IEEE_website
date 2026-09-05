@@ -3,6 +3,8 @@ import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import HeroCircuitPattern from '../../components/HeroCircuitPattern.astro';
+import { chapterCta } from '../../data/chapterCopy';
 import { chapters } from '../../data/chapters';
 import { formatLongDate, isPast } from '../../utils/date';
 import { withBase } from '../../utils/paths';
@@ -50,7 +52,8 @@ function eyebrow(date: Date, location?: string) {
 	<Header />
 	<main>
 		<section class="hero">
-			<div class="container">
+			<HeroCircuitPattern />
+			<div class="container hero-inner">
 				<h1>Activities &amp; Insights</h1>
 				<p>
 					Workshops, seminars, symposiums and competitions from the IEEE MIST Student Branch and its
@@ -144,12 +147,12 @@ function eyebrow(date: Date, location?: string) {
 					}
 
 					<article class="callout">
-						<h3>Become an IEEE Member</h3>
-						<p>
-							Unlock technical resources, networking opportunities, and professional development as
-							part of the world's largest technical community.
-						</p>
-						<a class="btn" href={withBase('/contact')}>Join IEEE MIST</a>
+						<img src={withBase('images/chapters/mtt-s/cta-pattern.png')} alt="" class="callout-pattern" />
+						<div class="callout-content">
+							<h3>{chapterCta.heading}</h3>
+							<p>{chapterCta.body}</p>
+							<a class="btn" href={chapterCta.href} target="_blank" rel="noopener noreferrer">{chapterCta.button}</a>
+						</div>
 					</article>
 				</div>
 
@@ -227,8 +230,14 @@ function eyebrow(date: Date, location?: string) {
 
 <style>
 	.hero {
-		background: var(--color-navy);
+		position: relative;
+		background: linear-gradient(135deg, var(--color-navy) 0%, #013a72 55%, var(--color-blue) 160%);
 		padding: 72px 0;
+		overflow: hidden;
+	}
+
+	.hero-inner {
+		position: relative;
 	}
 
 	.hero h1 {
@@ -510,13 +519,36 @@ function eyebrow(date: Date, location?: string) {
 	}
 
 	.callout {
+		position: relative;
+		overflow: hidden;
 		display: flex;
 		flex-direction: column;
 		gap: 14px;
 		justify-content: center;
 		padding: 32px;
 		border-radius: 4px;
-		background: var(--color-navy);
+		background: var(--color-purple);
+	}
+
+	.callout-pattern {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		opacity: 0.1;
+		transition: opacity 0.3s ease;
+	}
+
+	.callout:hover .callout-pattern {
+		opacity: 0.2;
+	}
+
+	.callout-content {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
 	}
 
 	.callout h3 {
@@ -535,8 +567,8 @@ function eyebrow(date: Date, location?: string) {
 		align-self: flex-start;
 		padding: 13px 26px;
 		border-radius: 4px;
-		background: var(--color-blue);
-		color: #fff;
+		background: #fff;
+		color: var(--color-purple);
 		font-size: 14px;
 		font-weight: 600;
 	}

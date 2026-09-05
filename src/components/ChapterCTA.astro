@@ -1,6 +1,5 @@
 ---
 import { chapterCta } from '../data/chapterCopy';
-import { chapterCtaPattern } from '../data/chapterAvatars';
 import { withBase } from '../utils/paths';
 
 interface Props {
@@ -8,18 +7,16 @@ interface Props {
 }
 
 const { slug } = Astro.props;
-
-const pattern = chapterCtaPattern[slug] ? withBase(`images/chapters/${slug}/cta-pattern.png`) : null;
 ---
 
 <section class="cta-wrap">
 	<div class="container">
 		<div class="cta">
-			{pattern && <img src={pattern} alt="" class="pattern" />}
+			<img src={withBase(`images/chapters/${slug}/cta-pattern.png`)} alt="" class="pattern" />
 			<div class="content">
 				<h2>{chapterCta.heading}</h2>
 				<p>{chapterCta.body}</p>
-				<a href={withBase('/contact')} class="btn">{chapterCta.button}</a>
+				<a href={chapterCta.href} class="btn" target="_blank" rel="noopener noreferrer">{chapterCta.button}</a>
 			</div>
 		</div>
 	</div>

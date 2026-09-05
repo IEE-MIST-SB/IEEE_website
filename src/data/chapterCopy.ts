@@ -215,9 +215,15 @@ export const chapterCopy: Record<string, ChapterCopy> = {
 	},
 };
 
-/** "Become an IEEE Member Today" CTA — identical text confirmed across every chapter's real export. */
+/**
+ * "Become an IEEE Member Today" CTA — identical text confirmed across every chapter's real export.
+ * The button links out to IEEE's own membership application: the student branch chapter itself
+ * can't enroll members — chapter membership follows from holding an IEEE membership, which only
+ * IEEE (not IEEE MIST SB) can issue.
+ */
 export const chapterCta = {
 	heading: 'Become an IEEE Member Today',
 	body: "Unlock exclusive technical resources, networking opportunities, and professional development tools as part of the world's largest technical community.",
-	button: 'Join IEEE MIST Chapter',
+	button: 'Join IEEE',
+	href: 'https://www.ieee.org/membership/join',
 };

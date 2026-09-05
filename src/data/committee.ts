@@ -13,16 +13,16 @@ export interface Member {
 /** Faculty and senior leadership shown on the About page. */
 export const leadership: Member[] = [
 	{
-		name: 'Major General Md. Wahid-Uz-Zaman',
+		name: 'Brigadier General K.M Mustafizur Rahman, psc',
 		role: 'Chief Patron',
-		avatar: withBase('images/home/photo-chief-patron.png'),
-		department: 'Commandant, MIST',
+		avatar: withBase('images/home/photo-chief-patron.jpg'),
+		department: 'Head, Department of EECE, MIST',
 	},
 	{
-		name: 'Professor Dr. Murtaza Ali',
-		role: 'Branch Counselor',
-		avatar: withBase('images/home/photo-branch-counselor.png'),
-		department: 'Department of EECE, MIST',
+		name: 'Lt. Col Aminul Islam, PhD, EME',
+		role: 'Counselor',
+		avatar: withBase('images/home/photo-branch-counselor.jpg'),
+		department: 'Department of EME, MIST',
 	},
 ];
 
@@ -63,6 +63,7 @@ export const executiveCommittee: Member[] = [
 		role: 'Webmaster',
 		department: 'EECE',
 		major: 'Communication',
+		avatar: withBase('images/home/exec/mahdia-maksud.jpg'),
 	},
 	{
 		name: 'Nushaira Monsur Raya',

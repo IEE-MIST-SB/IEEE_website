@@ -34,8 +34,8 @@ import { withBase } from '../../utils/paths';
 					{
 						chapters.map((chapter) => (
 							<a href={withBase(`/chapters/${chapter.slug}`)} class="card" style={`--accent:${chapter.accent}`}>
-								<div class="logo">
-									<img src={chapter.logoWhite} alt={`${chapter.code} logo`} loading="lazy" />
+								<div class="logo" style={`background:${chapter.bg}`}>
+									<img src={chapter.logo} alt={`${chapter.code} logo`} loading="lazy" />
 								</div>
 								<div class="body">
 									<p class="code">{chapter.code}</p>
@@ -92,6 +92,9 @@ import { withBase } from '../../utils/paths';
 		border-radius: 18px;
 		overflow: hidden;
 		background: #fff;
+		box-shadow:
+			0 12px 24px -12px rgba(0, 40, 85, 0.18),
+			0 4px 8px -4px rgba(0, 40, 85, 0.1);
 		transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 	}
 
@@ -107,11 +110,11 @@ import { withBase } from '../../utils/paths';
 		align-items: center;
 		justify-content: center;
 		padding: 24px;
-		background: linear-gradient(140deg, var(--color-navy) 0%, #013a72 60%, var(--accent) 190%);
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	.logo img {
-		max-height: 96px;
+		max-height: 110px;
 		max-width: 78%;
 		object-fit: contain;
 	}

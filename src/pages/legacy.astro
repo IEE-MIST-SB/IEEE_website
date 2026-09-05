@@ -2,13 +2,53 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { legacyPanels } from '../data/committee';
+import HeroCircuitPattern from '../components/HeroCircuitPattern.astro';
+import { legacyPanels, chapterPanels } from '../data/committee';
+import { chapters } from '../data/chapters';
+import { chapterExecAvatars } from '../data/chapterAvatars';
 import { withBase } from '../utils/paths';
 
 /**
  * Structure follows the Figma "Legacy - IEEE MIST Student Branch (Refined)" frame
  * (node 31:688): Hero -> year tabs -> executive panel grid.
+ *
+ * The current year's tab additionally breaks out into six sections — Student Branch
+ * plus each of the five chapters — all shown at once (no further clicking needed).
+ * Past years only ever tracked the branch-level panel, so they stay as a single grid.
  */
+
+// Order requested for the current-year breakout: Student Branch, then chapters in this order.
+const chapterOrder = ['eds', 'wie', 'aps', 'mtt-s', 'sps'];
+
+const yearTabs = legacyPanels.map((panel) => {
+	const sections = panel.current
+		? [
+				{ heading: 'Student Branch', code: 'SB', accent: 'var(--color-blue)', members: panel.members },
+				...chapterOrder.map((slug) => {
+					const chapter = chapters.find((c) => c.slug === slug);
+					const execAvatars = chapterExecAvatars[slug] ?? {};
+					const members = (chapterPanels[slug] ?? []).map((member) => ({
+						...member,
+						avatar: member.avatar ?? execAvatars[member.name],
+					}));
+					return {
+						heading: chapter?.fullName ?? slug,
+						code: chapter?.code ?? slug.toUpperCase(),
+						accent: chapter?.accent ?? 'var(--color-blue)',
+						members,
+					};
+				}),
+			]
+		: [{ heading: null, code: null, accent: null, members: panel.members }];
+
+	return {
+		key: panel.year,
+		label: panel.year,
+		heading: `${panel.year} Executive Panel`,
+		current: panel.current,
+		sections,
+	};
+});
 ---
 
 <Layout
@@ -19,6 +59,7 @@ import { withBase } from '../utils/paths';
 	<main>
 		<section class="hero">
 			<div class="hero-bg"></div>
+			<HeroCircuitPattern />
 			<div class="container hero-inner">
 				<h1>Branch Legacy</h1>
 				<p>
@@ -32,16 +73,16 @@ import { withBase } from '../utils/paths';
 			<div class="container">
 				<div class="tabs" role="tablist" aria-label="Select a term">
 					{
-						legacyPanels.map((panel, index) => (
+						yearTabs.map((tab, index) => (
 							<button
 								type="button"
 								role="tab"
 								class:list={['tab', { active: index === 0 }]}
-								data-year={panel.year}
+								data-key={tab.key}
 								aria-selected={index === 0 ? 'true' : 'false'}
 							>
-								{panel.year}
-								{panel.current && <span class="dot" aria-label="Current panel" />}
+								{tab.label}
+								{tab.current && <span class="dot" aria-label="Current panel" />}
 							</button>
 						))
 					}
@@ -52,42 +93,52 @@ import { withBase } from '../utils/paths';
 		<section class="panel-display">
 			<div class="container">
 				{
-					legacyPanels.map((panel, index) => (
-						<div class="panel" data-panel={panel.year} hidden={index !== 0}>
+					yearTabs.map((tab, index) => (
+						<div class="panel" data-panel={tab.key} hidden={index !== 0}>
 							<div class="panel-head">
 								<h2>
-									{panel.year} Executive Panel
-									{panel.current && <span class="badge">Current</span>}
+									{tab.heading}
+									{tab.current && <span class="badge">Current</span>}
 								</h2>
 								<span class="rule" />
 							</div>
 
-							<div class="grid">
-								{panel.members.map((member) => (
-									<article class="officer">
-										<div class="photo">
-											{member.avatar ? (
-												<img src={member.avatar} alt={member.name} loading="lazy" />
-											) : (
-												<img
-													src={withBase('images/home/icon-person.svg')}
-													alt=""
-													class="icon"
-													loading="lazy"
-												/>
-											)}
-										</div>
-										<p class="role">{member.role}</p>
-										<p class="name">{member.name}</p>
-										{member.department && (
-											<p class="dept">
-												{member.department}
-												{member.major ? ` · ${member.major}` : ''}
-											</p>
-										)}
-									</article>
-								))}
-							</div>
+							{tab.sections.map((section) => (
+								<div class="sub-section" style={section.accent ? `--accent:${section.accent}` : undefined}>
+									{section.heading && (
+										<h3 class="sub-heading">
+											{section.heading}
+											{section.code && <span class="sub-code">({section.code})</span>}
+										</h3>
+									)}
+									<div class="grid">
+										{section.members.map((member) => (
+											<article class="officer">
+												<div class="photo">
+													{member.avatar ? (
+														<img src={member.avatar} alt={member.name} loading="lazy" />
+													) : (
+														<img
+															src={withBase('images/home/icon-person.svg')}
+															alt=""
+															class="icon"
+															loading="lazy"
+														/>
+													)}
+												</div>
+												<p class="role">{member.role}</p>
+												<p class="name">{member.name}</p>
+												{member.department && (
+													<p class="dept">
+														{member.department}
+														{member.major ? ` · ${member.major}` : ''}
+													</p>
+												)}
+											</article>
+										))}
+									</div>
+								</div>
+							))}
 						</div>
 					))
 				}
@@ -103,14 +154,14 @@ import { withBase } from '../utils/paths';
 
 	tabs.forEach((tab) => {
 		tab.addEventListener('click', () => {
-			const year = tab.dataset.year;
+			const key = tab.dataset.key;
 			tabs.forEach((other) => {
 				const on = other === tab;
 				other.classList.toggle('active', on);
 				other.setAttribute('aria-selected', String(on));
 			});
 			panels.forEach((panel) => {
-				panel.hidden = panel.dataset.panel !== year;
+				panel.hidden = panel.dataset.panel !== key;
 			});
 		});
 	});
@@ -119,7 +170,7 @@ import { withBase } from '../utils/paths';
 <style>
 	.hero {
 		position: relative;
-		background: var(--color-navy);
+		background: linear-gradient(135deg, var(--color-navy) 0%, #013a72 55%, var(--color-blue) 160%);
 		padding: 96px 0;
 		overflow: hidden;
 	}
@@ -208,6 +259,34 @@ import { withBase } from '../utils/paths';
 		margin-bottom: 48px;
 	}
 
+	.sub-section {
+		--accent: var(--color-blue);
+		margin-bottom: 64px;
+		padding-left: 20px;
+		border-left: 4px solid var(--accent);
+	}
+
+	.sub-section:last-child {
+		margin-bottom: 0;
+	}
+
+	.sub-heading {
+		display: flex;
+		align-items: baseline;
+		gap: 10px;
+		margin-bottom: 24px;
+		font-size: 26px;
+		font-weight: 800;
+		letter-spacing: -0.3px;
+		color: var(--color-navy);
+	}
+
+	.sub-code {
+		font-size: 16px;
+		font-weight: 700;
+		color: var(--accent);
+	}
+
 	.panel-head h2 {
 		display: flex;
 		align-items: center;
@@ -237,13 +316,15 @@ import { withBase } from '../utils/paths';
 	}
 
 	.grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-start;
 		gap: 28px;
 	}
 
 	.officer {
-		padding: 24px;
+		width: 160px;
+		padding: 12px 12px 20px;
 		background: #fff;
 		border: 1px solid var(--color-border);
 		border-radius: 4px;
@@ -252,7 +333,7 @@ import { withBase } from '../utils/paths';
 
 	.photo {
 		aspect-ratio: 1;
-		margin-bottom: 20px;
+		margin-bottom: 12px;
 		border-radius: 4px;
 		overflow: hidden;
 		background: #f4f4f4;
@@ -296,9 +377,6 @@ import { withBase } from '../utils/paths';
 	}
 
 	@media (max-width: 900px) {
-		.grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
 		.hero h1 {
 			font-size: 34px;
 		}
@@ -308,8 +386,9 @@ import { withBase } from '../utils/paths';
 	}
 
 	@media (max-width: 560px) {
-		.grid {
-			grid-template-columns: 1fr;
+		.officer {
+			width: 100%;
+			max-width: 240px;
 		}
 	}
 </style>

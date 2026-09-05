@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import HeroCircuitPattern from '../components/HeroCircuitPattern.astro';
 import { withBase } from '../utils/paths';
 
 /**
@@ -54,7 +55,8 @@ const faqs = [
 	<Header />
 	<main>
 		<section class="hero">
-			<div class="container">
+			<HeroCircuitPattern />
+			<div class="container hero-inner">
 				<h1>Connect with IEEE MIST</h1>
 				<p>
 					Questions about membership, an event, or a collaboration? Send us a message and the right
@@ -167,8 +169,14 @@ const faqs = [
 
 <style>
 	.hero {
-		background: var(--color-navy);
+		position: relative;
+		background: linear-gradient(135deg, var(--color-navy) 0%, #013a72 55%, var(--color-blue) 160%);
 		padding: 72px 0;
+		overflow: hidden;
+	}
+
+	.hero-inner {
+		position: relative;
 	}
 
 	.hero h1 {

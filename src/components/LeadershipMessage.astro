@@ -2,36 +2,42 @@
 interface Props {
 	eyebrow: string;
 	heading: string;
-	quote: string;
+	/** Full message, one paragraph per entry. */
+	message: string[];
 	personName: string;
-	personTitle: string;
+	/** Signature lines shown under the name, in order (e.g. department, then position). */
+	personRoles: string[];
 	image: string;
 	imageAlt: string;
 	reverse?: boolean;
 }
 
-const { eyebrow, heading, quote, personName, personTitle, image, imageAlt, reverse = false } = Astro.props;
+const { eyebrow, heading, message, personName, personRoles, image, imageAlt, reverse = false } = Astro.props;
 ---
 
 <section class="leadership" class:list={{ reverse }}>
-	<div class="container grid">
-		<div class="photo-col">
-			<div class="photo-frame">
-				<img src={image} alt={imageAlt} />
-			</div>
-		</div>
-		<div class="text-col">
+	<div class="container">
+		<div class="section-head">
 			<p class="eyebrow">{eyebrow}</p>
 			<h2>{heading}</h2>
-			<div class="quote-card">
-				<span class="quote-mark" aria-hidden="true">&ldquo;</span>
-				<p class="quote">{quote}</p>
+		</div>
+		<div class="grid">
+			<div class="photo-col">
+				<div class="photo-frame">
+					<img src={image} alt={imageAlt} />
+				</div>
+				<div class="attribution">
+					<span class="divider"></span>
+					<div>
+						<p class="name">{personName}</p>
+						{personRoles.map((role) => <p class="role">{role}</p>)}
+					</div>
+				</div>
 			</div>
-			<div class="attribution">
-				<span class="divider"></span>
-				<div>
-					<p class="name">{personName}</p>
-					<p class="role">{personTitle}</p>
+			<div class="text-col">
+				<div class="message-card">
+					<span class="quote-mark" aria-hidden="true">&ldquo;</span>
+					{message.map((paragraph) => <p class="paragraph">{paragraph}</p>)}
 				</div>
 			</div>
 		</div>
@@ -44,11 +50,15 @@ const { eyebrow, heading, quote, personName, personTitle, image, imageAlt, rever
 		padding: 96px 0;
 	}
 
+	.section-head {
+		margin-bottom: 40px;
+	}
+
 	.grid {
 		display: grid;
 		grid-template-columns: 5fr 7fr;
 		gap: 64px;
-		align-items: center;
+		align-items: start;
 	}
 
 	.leadership.reverse .grid {
@@ -61,6 +71,12 @@ const { eyebrow, heading, quote, personName, personTitle, image, imageAlt, rever
 
 	.leadership.reverse .text-col {
 		order: 1;
+	}
+
+	.photo-col {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
 	}
 
 	.photo-frame {
@@ -76,18 +92,12 @@ const { eyebrow, heading, quote, personName, personTitle, image, imageAlt, rever
 		object-fit: cover;
 	}
 
-	.text-col {
-		display: flex;
-		flex-direction: column;
-		gap: 32px;
-	}
-
 	.eyebrow {
 		font-size: 12px;
 		letter-spacing: 3.6px;
 		text-transform: uppercase;
 		color: var(--color-blue);
-		margin-bottom: -18px;
+		margin-bottom: 12px;
 	}
 
 	h2 {
@@ -96,8 +106,11 @@ const { eyebrow, heading, quote, personName, personTitle, image, imageAlt, rever
 		font-weight: 400;
 	}
 
-	.quote-card {
+	.message-card {
 		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
 		background: #fff;
 		border: 1px solid rgba(0, 98, 155, 0.05);
 		border-radius: 16px;
@@ -117,18 +130,18 @@ const { eyebrow, heading, quote, personName, personTitle, image, imageAlt, rever
 		line-height: 1;
 	}
 
-	.quote {
-		font-size: 24px;
-		font-style: italic;
-		line-height: 1.6;
+	.paragraph {
+		font-size: 17px;
+		line-height: 1.75;
 		color: var(--color-text-secondary);
 	}
 
 	.attribution {
 		display: flex;
+		flex-direction: column;
 		align-items: center;
-		gap: 16px;
-		padding-top: 8px;
+		gap: 10px;
+		text-align: center;
 	}
 
 	.divider {
@@ -150,6 +163,10 @@ const { eyebrow, heading, quote, personName, personTitle, image, imageAlt, rever
 		color: var(--color-blue);
 	}
 
+	.role + .role {
+		margin-top: 2px;
+	}
+
 	@media (max-width: 800px) {
 		.grid,
 		.leadership.reverse .grid {
@@ -162,8 +179,11 @@ const { eyebrow, heading, quote, personName, personTitle, image, imageAlt, rever
 		h2 {
 			font-size: 32px;
 		}
-		.quote {
-			font-size: 20px;
+		.paragraph {
+			font-size: 16px;
+		}
+		.message-card {
+			padding: 28px;
 		}
 	}
 </style>

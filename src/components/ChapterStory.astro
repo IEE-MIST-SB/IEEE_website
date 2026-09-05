@@ -6,13 +6,17 @@ interface Props {
 	accent: string;
 	image?: string;
 	attribution?: string;
+	ctaHref?: string;
+	ctaLabel?: string;
+	/** 'center' (default) matches the home page's centered hero; 'left' matches ChapterHero's left-aligned layout. */
+	align?: 'center' | 'left';
 }
 
-const { paragraphs, accent, image, attribution } = Astro.props;
+const { paragraphs, accent, image, attribution, ctaHref, ctaLabel, align = 'center' } = Astro.props;
 ---
 
 <section class="story" style={`--accent:${accent}`}>
-	<div class="container grid" class:list={{ 'no-image': !image }}>
+	<div class="container grid" class:list={{ 'no-image': !image, 'align-left': align === 'left' }}>
 		{
 			image && (
 				<div class="photo">
@@ -25,6 +29,13 @@ const { paragraphs, accent, image, attribution } = Astro.props;
 			<span class="underline"></span>
 			{paragraphs.map((paragraph) => <p>{paragraph}</p>)}
 			{attribution && <p class="attribution">— {attribution}</p>}
+			{
+				ctaHref && (
+					<a href={withBase(ctaHref)} class="cta">
+						{ctaLabel ?? 'Discover Our Story'} <span aria-hidden="true">→</span>
+					</a>
+				)
+			}
 		</div>
 	</div>
 </section>
@@ -86,6 +97,20 @@ const { paragraphs, accent, image, attribution } = Astro.props;
 		text-align: center;
 	}
 
+	.grid.no-image.align-left {
+		max-width: var(--content-max-width);
+	}
+
+	.grid.no-image.align-left .text {
+		text-align: left;
+		max-width: 760px;
+	}
+
+	.grid.no-image.align-left .underline {
+		margin-left: 0;
+		margin-right: auto;
+	}
+
 	.text p {
 		font-size: 16px;
 		line-height: 1.5;
@@ -102,6 +127,24 @@ const { paragraphs, accent, image, attribution } = Astro.props;
 		font-weight: 600;
 		font-style: italic;
 		color: var(--accent);
+	}
+
+	.cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		margin-top: 24px;
+		font-size: 16px;
+		font-weight: 600;
+		color: var(--accent);
+	}
+
+	.cta span {
+		transition: transform 0.2s ease;
+	}
+
+	.cta:hover span {
+		transform: translateX(4px);
 	}
 
 	@media (max-width: 800px) {
