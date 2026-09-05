@@ -3,6 +3,6 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://IEEE-MIST-WIE.github.io',
+	site: 'https://IEE-MIST-SB.github.io',
 	base: '/IEEE_website',
 });
