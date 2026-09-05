@@ -17,7 +17,9 @@ export const chapterExecAvatars: Record<string, Record<string, string>> = {
 	aps: {
 		'Md. Mehedi Hasan Bhuiyan': withBase('images/chapters/aps/exec/mehedi-hasan.jpg'),
 		'Md. Forhaduzzaman Reyad': withBase('images/chapters/aps/exec/forhaduzzaman-reyad.jpg'),
+		'Sadia Noushin Promi': withBase('images/chapters/aps/exec/sadia-noushin-promi.jpg'),
 		'Abdullah Al Mahi': withBase('images/chapters/aps/exec/abdullah-al-mahi.jpg'),
+		'Nazifa Tasnim': withBase('images/chapters/aps/exec/nazifa-tasnim.jpg'),
 	},
 	eds: {
 		'Hafsa Khan': withBase('images/chapters/eds/exec/hafsa-khan.jpg'),

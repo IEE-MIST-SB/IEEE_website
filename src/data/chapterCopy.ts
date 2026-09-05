@@ -83,7 +83,6 @@ export const chapterCopy: Record<string, ChapterCopy> = {
 	},
 	sps: {
 		heroTitle: 'Signal Processing Society',
-		heroBadge: 'MIST Student Branch',
 		heroSubtitle:
 			'The science of analyzing, modifying, and synthesizing signals such as sound, images, and scientific measurements.',
 		about: [
@@ -116,7 +115,6 @@ export const chapterCopy: Record<string, ChapterCopy> = {
 	},
 	aps: {
 		heroTitle: 'Antennas and Propagation Society',
-		heroBadge: 'IEEE APS MIST Chapter',
 		heroSubtitle:
 			'Advancing the theory and practice of electromagnetics, antenna systems, and radio wave propagation environments. We connect the world through academic precision and engineering excellence.',
 		about: [
@@ -193,7 +191,6 @@ export const chapterCopy: Record<string, ChapterCopy> = {
 	},
 	'mtt-s': {
 		heroHeadline: { before: 'Advancing the Frontier of', highlight: 'Microwave Engineering', after: '' },
-		heroBadge: 'Microwave Theory and Technology Society',
 		heroSubtitle:
 			'The IEEE MTT-S Student Branch Chapter at MIST serves as a nexus for students passionate about high-frequency electronics, electromagnetics, and future communication technologies.',
 		about: [
