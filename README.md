@@ -41,7 +41,8 @@ No Git commands, no code editing, no manual deployment — just fill and publish
 │   ├── layouts/            # Page layouts
 │   └── utils/              # Path + date helpers
 ├── supabase/
-│   └── schema.sql          # Tables + Row Level Security — run once in the Supabase SQL editor
+│   ├── schema.sql          # Tables + Row Level Security — run once in the Supabase SQL editor
+│   └── functions/notify-contact/  # Edge Function that emails new contact messages
 ├── public/
 │   ├── admin/              # Decap CMS config (config.yml + index.html)
 │   └── images/             # Static images
@@ -106,6 +107,25 @@ and run it. It is safe to re-run. Until it has been run, the forms will show a f
 
 **Reading submissions:** use the dashboard's **Table Editor** (or the service-role key from a trusted
 place — never commit it). Visitors cannot read any submission back.
+
+**Emailing contact messages to ieeemistsb@mist.ac.bd:** messages are always saved in `contact_messages`; a
+Database Webhook + the Edge Function in [`supabase/functions/notify-contact`](supabase/functions/notify-contact)
+also emails each one (Reply-To is set to the sender). One-time setup:
+
+1. Create a [Resend](https://resend.com) account, **verify a sending domain** (add its DNS records), and create an API key.
+   Without a verified domain Resend only delivers to the account owner's own address.
+2. With the [Supabase CLI](https://supabase.com/docs/guides/cli), from the repo root:
+   ```bash
+   supabase login && supabase link --project-ref czxhvlqhfqhovuslglpe
+   supabase secrets set WEBHOOK_SECRET="<long random string>" RESEND_API_KEY="re_..." \
+     MAIL_FROM="IEEE MIST Website <noreply@your-verified-domain>"
+   supabase functions deploy notify-contact --no-verify-jwt
+   ```
+   (`MAIL_TO` defaults to `ieeemistsb@mist.ac.bd`; set it to override.)
+3. Dashboard → **Database → Webhooks → Create a new hook**: table `contact_messages`, event **Insert**, type
+   **HTTP Request**, method `POST`, URL `https://czxhvlqhfqhovuslglpe.supabase.co/functions/v1/notify-contact`,
+   and an HTTP header `x-webhook-secret` with the same value as `WEBHOOK_SECRET`.
+4. Send a test message from `/contact`. If no email arrives, check **Edge Functions → notify-contact → Logs**.
 
 **Events from Supabase:** insert a row into `events` with `published = true`. It is fetched at *build*
 time, so it appears on the next deploy (trigger one from Vercel/Netlify or GitHub Actions). If Supabase is
