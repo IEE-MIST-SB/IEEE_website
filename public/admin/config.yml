@@ -63,7 +63,15 @@ collections:
           label: Registration link,
           widget: string,
           required: false,
-          hint: 'Google Form or other registration URL.',
+          hint: 'Optional. Visitors can register on the event page itself; a link here is shown as an alternative.',
+        }
+      - {
+          name: registrationOpen,
+          label: Registration open,
+          widget: boolean,
+          default: true,
+          required: false,
+          hint: 'Untick to hide the sign-up form on this event.',
         }
       - {
           name: featured,

@@ -3,7 +3,8 @@ import { glob } from 'astro/loaders';
 
 /**
  * Events are plain Markdown files in `src/content/events/`, authored either by hand
- * or through the Decap CMS form at `/admin`. The schema below must stay in sync with
+ * or through the Decap CMS form at `/admin`. (Events can also be published from the
+ * Supabase `events` table — see `src/lib/events.ts`.) The schema below must stay in sync with
  * `public/admin/config.yml`.
  */
 const events = defineCollection({
@@ -17,7 +18,10 @@ const events = defineCollection({
 		image: z.string().optional(),
 		location: z.string().optional(),
 		time: z.string().optional(),
+		/** Optional external form (e.g. Google Forms), offered as an alternative to the built-in sign-up. */
 		registrationLink: z.string().optional(),
+		/** Set to false to hide the sign-up form on an upcoming event. */
+		registrationOpen: z.boolean().default(true),
 		/** Pins the event to the top of the Events page and the home page slider. */
 		featured: z.boolean().default(false),
 		tags: z.array(z.string()).default([]),

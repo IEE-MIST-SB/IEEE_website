@@ -8,12 +8,33 @@
 			Join our newsletter to receive the latest updates on technical workshops, seminars, and
 			networking events directly in your inbox.
 		</p>
-		<form class="form">
-			<input type="email" placeholder="Enter your academic email" required aria-label="Academic email" />
+		<form class="form" data-newsletter-form>
+			<input
+				type="email"
+				name="email"
+				placeholder="Enter your academic email"
+				required
+				maxlength="254"
+				autocomplete="email"
+				aria-label="Academic email"
+			/>
+			<!-- Honeypot: hidden from people, irresistible to bots. -->
+			<div class="hp" aria-hidden="true">
+				<label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+			</div>
 			<button type="submit">Subscribe</button>
+			<p class="status" data-status role="status" aria-live="polite"></p>
 		</form>
 	</div>
 </section>
+
+<script>
+	import { bindForm, subscribeToNewsletter } from '../lib/forms';
+
+	document
+		.querySelectorAll<HTMLFormElement>('form[data-newsletter-form]')
+		.forEach((form) => bindForm(form, subscribeToNewsletter));
+</script>
 
 <style>
 	.newsletter {
@@ -44,6 +65,7 @@
 
 	.form {
 		display: flex;
+		flex-wrap: wrap;
 		gap: 16px;
 		width: 100%;
 		max-width: 512px;
@@ -61,6 +83,14 @@
 		font-family: var(--font-sans);
 	}
 
+	.hp {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+
 	.form input::placeholder {
 		color: rgba(255, 255, 255, 0.4);
 	}
@@ -73,6 +103,33 @@
 		color: #fff;
 		font-size: 16px;
 		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+		cursor: pointer;
+	}
+
+	.form button:disabled {
+		opacity: 0.6;
+		cursor: progress;
+	}
+
+	.status {
+		flex-basis: 100%;
+		margin: 0;
+		font-size: 15px;
+		line-height: 1.5;
+		text-align: center;
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	.status:empty {
+		display: none;
+	}
+
+	.status[data-state='success'] {
+		color: #7ee2a8;
+	}
+
+	.status[data-state='error'] {
+		color: #ffb4ab;
 	}
 
 	@media (max-width: 560px) {

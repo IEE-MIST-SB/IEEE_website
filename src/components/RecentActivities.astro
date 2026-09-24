@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getAllEvents } from '../lib/events';
 import { formatBadgeDate } from '../utils/date';
 import { withBase } from '../utils/paths';
 
@@ -18,8 +18,8 @@ const slides = [
 	},
 ];
 
-/** The three most recent events from the content collection (managed in /admin). */
-const events = (await getCollection('events'))
+/** The three most recent events (Markdown collection + Supabase). */
+const events = (await getAllEvents())
 	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 	.slice(0, 3)
 	.map((event) => ({

@@ -1,5 +1,4 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
@@ -11,6 +10,7 @@ import ChapterAssociateCommittee from '../../components/ChapterAssociateCommitte
 import ChapterCTA from '../../components/ChapterCTA.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import EventCard from '../../components/EventCard.astro';
+import { getAllEvents } from '../../lib/events';
 import { chapters } from '../../data/chapters';
 import { chapterPanels, associatesForChapter } from '../../data/committee';
 import { chapterCopy } from '../../data/chapterCopy';
@@ -28,7 +28,7 @@ const { chapter } = Astro.props;
 const copy = chapterCopy[chapter.slug];
 const accent2 = chapterAccent2[chapter.slug] ?? chapter.accent;
 
-const allEvents = await getCollection('events');
+const allEvents = await getAllEvents();
 const chapterEvents = allEvents
 	.filter((event) => event.data.chapter === chapter.shortName)
 	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())

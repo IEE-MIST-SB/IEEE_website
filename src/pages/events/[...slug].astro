@@ -1,18 +1,19 @@
 ---
-import { getCollection, render } from 'astro:content';
-import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PageHero from '../../components/PageHero.astro';
 import EventCard from '../../components/EventCard.astro';
+import EventRegistration from '../../components/EventRegistration.astro';
 import Newsletter from '../../components/Newsletter.astro';
+import { getAllEvents, type SiteEvent } from '../../lib/events';
 import { chapters } from '../../data/chapters';
 import { formatLongDate, isPast } from '../../utils/date';
 import { withBase } from '../../utils/paths';
 
 export async function getStaticPaths() {
-	const events = await getCollection('events');
+	const events = await getAllEvents();
 	return events.map((event) => ({
 		params: { slug: event.id },
 		props: { event },
@@ -20,16 +21,21 @@ export async function getStaticPaths() {
 }
 
 interface Props {
-	event: CollectionEntry<'events'>;
+	event: SiteEvent;
 }
 
 const { event } = Astro.props;
-const { Content } = await render(event);
+// Markdown events render through Astro; Supabase events carry plain-text paragraphs.
+const Content = event.entry ? (await render(event.entry)).Content : null;
+const paragraphs = (event.body ?? '')
+	.split(/\n{2,}/)
+	.map((text) => text.trim())
+	.filter(Boolean);
 
 const chapter = chapters.find((item) => item.shortName === event.data.chapter);
 const past = isPast(event.data.date);
 
-const related = (await getCollection('events'))
+const related = (await getAllEvents())
 	.filter((item) => item.id !== event.id && item.data.chapter === event.data.chapter)
 	.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 	.slice(0, 3);
@@ -68,7 +74,7 @@ const related = (await getCollection('events'))
 					}
 
 					<div class="prose">
-						<Content />
+						{Content ? <Content /> : paragraphs.map((text) => <p class="plain">{text}</p>)}
 					</div>
 				</article>
 
@@ -85,17 +91,20 @@ const related = (await getCollection('events'))
 						{
 							past ? (
 								<p class="closed">This event has already taken place.</p>
-							) : event.data.registrationLink ? (
-								<a
-									class="btn"
-									href={event.data.registrationLink}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									Register now
-								</a>
+							) : event.data.registrationOpen ? (
+								<>
+									<EventRegistration slug={event.id} />
+									{event.data.registrationLink && (
+										<p class="alt">
+											Prefer an external form?{' '}
+											<a href={event.data.registrationLink} target="_blank" rel="noopener noreferrer">
+												Register there instead
+											</a>
+										</p>
+									)}
+								</>
 							) : (
-								<p class="closed">Registration details will be announced soon.</p>
+								<p class="closed">Registration for this event is closed.</p>
 							)
 						}
 					</div>
@@ -287,16 +296,20 @@ const related = (await getCollection('events'))
 		color: var(--color-navy);
 	}
 
-	.btn {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 15px 28px;
-		border-radius: 8px;
-		background: var(--color-blue);
-		color: #fff;
-		font-size: 15px;
-		font-weight: 600;
+	.alt {
+		margin-top: 16px;
+		font-size: 13px;
+		line-height: 1.6;
+		color: var(--color-text-muted);
+	}
+
+	.alt a {
+		color: var(--color-blue);
+		text-decoration: underline;
+	}
+
+	.prose :global(p.plain) {
+		white-space: pre-line;
 	}
 
 	.closed {

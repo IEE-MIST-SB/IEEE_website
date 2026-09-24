@@ -1,9 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import HeroCircuitPattern from '../../components/HeroCircuitPattern.astro';
+import { getAllEvents } from '../../lib/events';
 import { chapterCta } from '../../data/chapterCopy';
 import { chapters } from '../../data/chapters';
 import { formatLongDate, isPast } from '../../utils/date';
@@ -14,11 +14,11 @@ import { withBase } from '../../utils/paths';
  * Hero -> Filter & Search bar -> Featured spotlight (bento) -> Main feed grid
  * (with membership callout) -> Load more.
  *
- * Content still comes from the `events` collection so the Decap CMS at /admin
- * keeps working; the Figma cards were static mockups.
+ * Events come from the Markdown collection (so the Decap CMS at /admin keeps working)
+ * plus any published rows in Supabase — see `src/lib/events.ts`.
  */
 
-const all = (await getCollection('events')).sort(
+const all = (await getAllEvents()).sort(
 	(a, b) => b.data.date.getTime() - a.data.date.getTime()
 );
 

@@ -1,0 +1,139 @@
+---
+interface Props {
+	/** Event slug — stored with the registration so it can be matched to the event. */
+	slug: string;
+}
+
+const { slug } = Astro.props;
+---
+
+<form class="registration" data-event-registration>
+	<input type="hidden" name="event_slug" value={slug} />
+
+	<label>
+		<span>Full name</span>
+		<input type="text" name="name" required maxlength="120" autocomplete="name" placeholder="Your name" />
+	</label>
+
+	<label>
+		<span>Email address</span>
+		<input type="email" name="email" required maxlength="254" autocomplete="email" placeholder="you@example.com" />
+	</label>
+
+	<label>
+		<span>Student ID <em>(optional)</em></span>
+		<input type="text" name="student_id" maxlength="40" />
+	</label>
+
+	<label>
+		<span>Department <em>(optional)</em></span>
+		<input type="text" name="department" maxlength="120" autocomplete="organization-title" />
+	</label>
+
+	<!-- Honeypot: hidden from people, irresistible to bots. -->
+	<div class="hp" aria-hidden="true">
+		<label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+	</div>
+
+	<button type="submit" class="btn">Register now</button>
+	<p class="status" data-status role="status" aria-live="polite"></p>
+</form>
+
+<script>
+	import { bindForm, registerForEvent } from '../lib/forms';
+
+	document
+		.querySelectorAll<HTMLFormElement>('form[data-event-registration]')
+		.forEach((form) => bindForm(form, registerForEvent));
+</script>
+
+<style>
+	.registration {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
+
+	label {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	label span {
+		font-size: 11px;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		color: var(--color-text-muted);
+	}
+
+	label em {
+		font-style: normal;
+		text-transform: none;
+		letter-spacing: 0;
+	}
+
+	input {
+		padding: 12px 14px;
+		border: 1px solid var(--color-border);
+		border-radius: 8px;
+		background: #fff;
+		font-size: 15px;
+		font-family: var(--font-sans);
+		color: var(--color-text);
+	}
+
+	input:focus {
+		outline: 2px solid rgba(0, 98, 155, 0.3);
+		border-color: var(--color-blue);
+	}
+
+	.hp {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+
+	.btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 15px 28px;
+		border: none;
+		border-radius: 8px;
+		background: var(--color-blue);
+		color: #fff;
+		font-size: 15px;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.btn:disabled {
+		opacity: 0.6;
+		cursor: progress;
+	}
+
+	.status {
+		margin: 0;
+		font-size: 14px;
+		line-height: 1.5;
+	}
+
+	.status:empty {
+		display: none;
+	}
+
+	.status[data-state='pending'] {
+		color: var(--color-text-muted);
+	}
+
+	.status[data-state='success'] {
+		color: #1a7f46;
+	}
+
+	.status[data-state='error'] {
+		color: #b3261e;
+	}
+</style>
