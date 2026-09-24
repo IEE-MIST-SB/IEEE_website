@@ -1,6 +1,8 @@
 ---
-import { associateCommittee as members } from '../data/committee';
+import { getAssociateCommittee } from '../lib/content';
 import { withBase } from '../utils/paths';
+
+const members = await getAssociateCommittee();
 ---
 
 

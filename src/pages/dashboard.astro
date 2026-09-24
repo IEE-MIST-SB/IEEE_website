@@ -1,0 +1,899 @@
+---
+import { withBase } from '../utils/paths';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="robots" content="noindex, nofollow" />
+		<title>Content Dashboard | IEEE MIST Student Branch</title>
+		<link rel="icon" href={withBase('favicon.ico')} />
+	</head>
+	<body>
+		<div id="app">
+			<p class="boot">Loading dashboard…</p>
+		</div>
+
+		<script>
+			import { createClient } from '@supabase/supabase-js';
+
+			const SUPABASE_URL = 'https://czxhvlqhfqhovuslglpe.supabase.co';
+			const SUPABASE_KEY = 'sb_publishable__C3FKDsT53MA-0siZYUbKw_Q26ZkV_H';
+			const BUCKET = 'site-content';
+
+			const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+			const app = document.getElementById('app')!;
+
+			const CHAPTERS = ['SB', 'EDS', 'APS', 'WIE', 'MTT-S', 'SPS'];
+
+			// ---------------------------------------------------------------------
+			// Small helpers
+			// ---------------------------------------------------------------------
+			function el<K extends keyof HTMLElementTagNameMap>(
+				tag: K,
+				attrs: Record<string, string> = {},
+				children: (Node | string)[] = [],
+			): HTMLElementTagNameMap[K] {
+				const node = document.createElement(tag);
+				for (const [k, v] of Object.entries(attrs)) {
+					if (k === 'class') node.className = v;
+					else node.setAttribute(k, v);
+				}
+				for (const child of children) {
+					node.append(child);
+				}
+				return node;
+			}
+
+			function toast(message: string, kind: 'ok' | 'err' = 'ok') {
+				const bar = document.getElementById('toast');
+				if (!bar) return;
+				bar.textContent = message;
+				bar.className = `toast show ${kind}`;
+				window.clearTimeout((bar as any)._t);
+				(bar as any)._t = window.setTimeout(() => bar.classList.remove('show'), 3500);
+			}
+
+			function publicImageUrl(path: string): string {
+				return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+			}
+
+			async function uploadImage(file: File, folder: string): Promise<string> {
+				const ext = file.name.split('.').pop() || 'jpg';
+				const path = `${folder}/${crypto.randomUUID()}.${ext}`;
+				const { error } = await supabase.storage
+					.from(BUCKET)
+					.upload(path, file, { cacheControl: '3600', upsert: false });
+				if (error) throw error;
+				return publicImageUrl(path);
+			}
+
+			function imagePicker(currentUrl: string | null, folder: string, onChange: (url: string) => void) {
+				const wrap = el('div', { class: 'imgpick' });
+				const preview = el('img', {
+					class: 'imgpick-preview',
+					src: currentUrl || withBaseNoop('images/placeholder.png'),
+					alt: '',
+				});
+				preview.onerror = () => (preview.style.visibility = 'hidden');
+				const input = el('input', { type: 'file', accept: 'image/*', class: 'imgpick-input' }) as HTMLInputElement;
+				const status = el('span', { class: 'imgpick-status' }, ['']);
+				input.addEventListener('change', async () => {
+					const file = input.files?.[0];
+					if (!file) return;
+					status.textContent = 'Uploading…';
+					try {
+						const url = await uploadImage(file, folder);
+						preview.src = url;
+						preview.style.visibility = 'visible';
+						status.textContent = 'Uploaded';
+						onChange(url);
+					} catch (err: any) {
+						status.textContent = `Upload failed: ${err.message || err}`;
+					}
+				});
+				wrap.append(preview, input, status);
+				return wrap;
+			}
+
+			function withBaseNoop(p: string) {
+				return p; // placeholder only used for a broken-image fallback
+			}
+
+			// ---------------------------------------------------------------------
+			// Auth screen
+			// ---------------------------------------------------------------------
+			function renderLogin() {
+				app.replaceChildren();
+				const form = el('form', { class: 'login-card' });
+				form.append(
+					el('h1', {}, ['IEEE MIST Content Dashboard']),
+					el('p', { class: 'muted' }, ['Sign in with the admin account created in Supabase.']),
+				);
+				const email = el('input', { type: 'email', placeholder: 'Email', required: 'true', class: 'field' }) as HTMLInputElement;
+				const password = el('input', {
+					type: 'password',
+					placeholder: 'Password',
+					required: 'true',
+					class: 'field',
+				}) as HTMLInputElement;
+				const error = el('p', { class: 'error' }, ['']);
+				const submit = el('button', { type: 'submit', class: 'btn primary' }, ['Sign in']);
+				form.append(email, password, error, submit);
+				form.addEventListener('submit', async (e) => {
+					e.preventDefault();
+					submit.setAttribute('disabled', 'true');
+					error.textContent = '';
+					const { error: signInError } = await supabase.auth.signInWithPassword({
+						email: email.value.trim(),
+						password: password.value,
+					});
+					if (signInError) {
+						error.textContent = signInError.message;
+						submit.removeAttribute('disabled');
+					}
+					// onAuthStateChange below re-renders the app once signed in.
+				});
+				app.append(form);
+			}
+
+			// ---------------------------------------------------------------------
+			// Shell (tabs + publish button)
+			// ---------------------------------------------------------------------
+			const TABS = [
+				{ id: 'chief_patron', label: "Chief Patron's Message" },
+				{ id: 'counselor', label: "Counselor's Message" },
+				{ id: 'exec', label: 'Executive Committee' },
+				{ id: 'assoc', label: 'Associate Directors' },
+				{ id: 'activities', label: 'Recent Activities' },
+				{ id: 'settings', label: 'Publishing' },
+			];
+
+			async function renderShell(userEmail: string) {
+				app.replaceChildren();
+
+				const header = el('header', { class: 'topbar' });
+				header.append(
+					el('div', { class: 'brand' }, ['IEEE MIST — Content Dashboard']),
+					el('div', { class: 'who' }, [
+						el('span', {}, [userEmail]),
+						(() => {
+							const btn = el('button', { class: 'btn ghost' }, ['Sign out']);
+							btn.addEventListener('click', () => supabase.auth.signOut());
+							return btn;
+						})(),
+					]),
+				);
+
+				const tabbar = el('nav', { class: 'tabbar' });
+				const panelHost = el('div', { class: 'panel-host' });
+				const panels: Record<string, HTMLElement> = {};
+
+				for (const tab of TABS) {
+					const btn = el('button', { class: 'tab', 'data-tab': tab.id }, [tab.label]);
+					btn.addEventListener('click', () => activate(tab.id));
+					tabbar.append(btn);
+					panels[tab.id] = el('section', { class: 'panel' });
+					panelHost.append(panels[tab.id]);
+				}
+
+				function activate(id: string) {
+					for (const b of tabbar.querySelectorAll('.tab')) b.classList.toggle('active', (b as HTMLElement).dataset.tab === id);
+					for (const [pid, p] of Object.entries(panels)) p.classList.toggle('active', pid === id);
+				}
+
+				app.append(header, tabbar, panelHost, el('div', { id: 'toast', class: 'toast' }, ['']));
+
+				await Promise.all([
+					renderLeadershipPanel(panels.chief_patron, 'chief_patron'),
+					renderLeadershipPanel(panels.counselor, 'counselor'),
+					renderMembersPanel(panels.exec, 'executive_committee', 'exec'),
+					renderAssociatesPanel(panels.assoc),
+					renderActivitiesPanel(panels.activities),
+					renderSettingsPanel(panels.settings),
+				]);
+
+				activate('chief_patron');
+			}
+
+			// ---------------------------------------------------------------------
+			// Chief Patron's / Counselor's Message
+			// ---------------------------------------------------------------------
+			async function renderLeadershipPanel(host: HTMLElement, id: 'chief_patron' | 'counselor') {
+				host.replaceChildren(el('p', { class: 'muted' }, ['Loading…']));
+				const { data, error } = await supabase.from('leadership_messages').select('*').eq('id', id).maybeSingle();
+				if (error) {
+					host.replaceChildren(el('p', { class: 'error' }, [error.message]));
+					return;
+				}
+				const row = data || {
+					id,
+					eyebrow: '',
+					heading: '',
+					person_name: '',
+					person_roles: [],
+					message: [],
+					image_url: null,
+				};
+
+				host.replaceChildren();
+				const form = el('form', { class: 'edit-form' });
+
+				const eyebrow = field('Eyebrow (small label above heading)', row.eyebrow || '');
+				const heading = field('Heading', row.heading || '');
+				const personName = field('Name', row.person_name || '');
+				const personRoles = field(
+					'Roles / titles (one per line)',
+					(row.person_roles || []).join('\n'),
+					true,
+				);
+				const message = field('Message (one paragraph per line, blank line between paragraphs is fine)', (row.message || []).join('\n\n'), true, 10);
+
+				let imageUrl: string | null = row.image_url || null;
+				const picker = imagePicker(imageUrl, `leadership/${id}`, (url) => (imageUrl = url));
+
+				const status = el('p', { class: 'muted small' }, ['']);
+				const save = el('button', { type: 'submit', class: 'btn primary' }, ['Save']);
+
+				form.append(
+					labeled('Photo', picker),
+					labeled('Eyebrow', eyebrow),
+					labeled('Heading', heading),
+					labeled('Name', personName),
+					labeled('Roles / titles (one per line)', personRoles),
+					labeled('Message (blank line = new paragraph)', message),
+					save,
+					status,
+				);
+
+				form.addEventListener('submit', async (e) => {
+					e.preventDefault();
+					save.setAttribute('disabled', 'true');
+					status.textContent = 'Saving…';
+					const paragraphs = message.value
+						.split(/\n\s*\n/)
+						.map((p) => p.replace(/\n/g, ' ').trim())
+						.filter(Boolean);
+					const roles = personRoles.value.split('\n').map((r) => r.trim()).filter(Boolean);
+					const { error: upsertError } = await supabase.from('leadership_messages').upsert({
+						id,
+						eyebrow: eyebrow.value.trim(),
+						heading: heading.value.trim(),
+						person_name: personName.value.trim(),
+						person_roles: roles,
+						message: paragraphs,
+						image_url: imageUrl,
+						updated_at: new Date().toISOString(),
+					});
+					save.removeAttribute('disabled');
+					if (upsertError) {
+						status.textContent = `Error: ${upsertError.message}`;
+						toast('Could not save — see the panel for details', 'err');
+					} else {
+						status.textContent = 'Saved.';
+						toast('Saved. Click "Publish changes" in the Publishing tab to make it live.');
+					}
+				});
+
+				host.append(form);
+			}
+
+			function field(_label: string, value: string, textarea = false, rows = 3) {
+				const input = textarea
+					? (el('textarea', { class: 'field', rows: String(rows) }) as HTMLTextAreaElement)
+					: (el('input', { type: 'text', class: 'field' }) as HTMLInputElement);
+				input.value = value;
+				return input as any;
+			}
+
+			function labeled(text: string, node: Node) {
+				const wrap = el('label', { class: 'labeled' });
+				wrap.append(el('span', { class: 'label-text' }, [text]), node);
+				return wrap;
+			}
+
+			// ---------------------------------------------------------------------
+			// Executive Committee (simple member list, no grouping)
+			// ---------------------------------------------------------------------
+			async function renderMembersPanel(host: HTMLElement, table: string, folder: string) {
+				host.replaceChildren(el('p', { class: 'muted' }, ['Loading…']));
+				const { data, error } = await supabase.from(table).select('*').order('sort_order', { ascending: true });
+				if (error) {
+					host.replaceChildren(el('p', { class: 'error' }, [error.message]));
+					return;
+				}
+				host.replaceChildren();
+				const list = el('div', { class: 'card-list' });
+				host.append(el('p', { class: 'muted' }, ['Drag order with the number field. Changes save per-card.']), list, addMemberForm());
+
+				for (const row of data || []) list.append(memberCard(row));
+
+				function memberCard(row: any) {
+					const card = el('div', { class: 'member-card' });
+					const name = field('', row.name);
+					const role = field('', row.role);
+					const department = field('', row.department || '');
+					const major = field('', row.major || '');
+					const order = el('input', { type: 'number', class: 'field small', value: String(row.sort_order ?? 0) }) as HTMLInputElement;
+					let avatarUrl: string | null = row.avatar_url || null;
+					const picker = imagePicker(avatarUrl, folder, (url) => (avatarUrl = url));
+
+					const status = el('span', { class: 'muted small' }, ['']);
+					const save = el('button', { class: 'btn small' }, ['Save']);
+					const del = el('button', { class: 'btn small danger' }, ['Delete']);
+
+					save.addEventListener('click', async () => {
+						status.textContent = 'Saving…';
+						const { error: err } = await supabase
+							.from(table)
+							.update({
+								name: name.value.trim(),
+								role: role.value.trim(),
+								department: department.value.trim() || null,
+								major: major.value.trim() || null,
+								sort_order: Number(order.value) || 0,
+								avatar_url: avatarUrl,
+								updated_at: new Date().toISOString(),
+							})
+							.eq('id', row.id);
+						status.textContent = err ? `Error: ${err.message}` : 'Saved.';
+						if (!err) toast('Saved. Publish to make it live.');
+					});
+
+					del.addEventListener('click', async () => {
+						if (!confirm(`Remove ${row.name}?`)) return;
+						const { error: err } = await supabase.from(table).delete().eq('id', row.id);
+						if (err) return toast(err.message, 'err');
+						card.remove();
+						toast('Removed. Publish to make it live.');
+					});
+
+					card.append(
+						picker,
+						labeled('Name', name),
+						labeled('Role', role),
+						labeled('Department', department),
+						labeled('Major', major),
+						labeled('Order', order),
+						el('div', { class: 'row-actions' }, [save, del, status]),
+					);
+					return card;
+				}
+
+				function addMemberForm() {
+					const form = el('form', { class: 'add-form' });
+					const name = field('', '');
+					const role = field('', '');
+					const department = field('', '');
+					const major = field('', '');
+					let avatarUrl: string | null = null;
+					const picker = imagePicker(null, folder, (url) => (avatarUrl = url));
+					const submit = el('button', { type: 'submit', class: 'btn primary small' }, ['+ Add member']);
+					name.placeholder = 'Name';
+					role.placeholder = 'Role (e.g. Chair)';
+					department.placeholder = 'Department (optional)';
+					major.placeholder = 'Major (optional)';
+					form.append(
+						el('h3', {}, ['Add a new member']),
+						picker,
+						name,
+						role,
+						department,
+						major,
+						submit,
+					);
+					form.addEventListener('submit', async (e) => {
+						e.preventDefault();
+						if (!name.value.trim() || !role.value.trim()) return;
+						const { data: inserted, error: err } = await supabase
+							.from(table)
+							.insert({
+								name: name.value.trim(),
+								role: role.value.trim(),
+								department: department.value.trim() || null,
+								major: major.value.trim() || null,
+								avatar_url: avatarUrl,
+								sort_order: (data?.length || 0) + list.children.length,
+							})
+							.select()
+							.single();
+						if (err) return toast(err.message, 'err');
+						list.append(memberCard(inserted));
+						form.reset();
+						avatarUrl = null;
+						toast('Added. Publish to make it live.');
+					});
+					return form;
+				}
+			}
+
+			// ---------------------------------------------------------------------
+			// Associate Directors (grouped; dashboard manages the branch-level "sb" group)
+			// ---------------------------------------------------------------------
+			async function renderAssociatesPanel(host: HTMLElement) {
+				host.replaceChildren(el('p', { class: 'muted' }, ['Loading…']));
+				const { data, error } = await supabase
+					.from('associate_directors')
+					.select('*')
+					.eq('group_key', 'sb')
+					.order('sort_order', { ascending: true });
+				if (error) {
+					host.replaceChildren(el('p', { class: 'error' }, [error.message]));
+					return;
+				}
+				host.replaceChildren();
+				host.append(
+					el('p', { class: 'muted' }, [
+						'Shows the branch-level Associate Directors on the home page. (Chapter-level rosters aren\u2019t editable here yet.)',
+					]),
+				);
+				await renderMembersLikeAssociates(host, data || []);
+			}
+
+			async function renderMembersLikeAssociates(host: HTMLElement, data: any[]) {
+				const list = el('div', { class: 'card-list' });
+				host.append(list);
+
+				for (const row of data) list.append(card(row));
+				host.append(addForm());
+
+				function card(row: any) {
+					const c = el('div', { class: 'member-card' });
+					const name = field('', row.name);
+					const role = field('', row.role);
+					const order = el('input', { type: 'number', class: 'field small', value: String(row.sort_order ?? 0) }) as HTMLInputElement;
+					let avatarUrl: string | null = row.avatar_url || null;
+					const picker = imagePicker(avatarUrl, 'associates', (url) => (avatarUrl = url));
+					const status = el('span', { class: 'muted small' }, ['']);
+					const save = el('button', { class: 'btn small' }, ['Save']);
+					const del = el('button', { class: 'btn small danger' }, ['Delete']);
+
+					save.addEventListener('click', async () => {
+						status.textContent = 'Saving…';
+						const { error: err } = await supabase
+							.from('associate_directors')
+							.update({
+								name: name.value.trim(),
+								role: role.value.trim(),
+								sort_order: Number(order.value) || 0,
+								avatar_url: avatarUrl,
+								updated_at: new Date().toISOString(),
+							})
+							.eq('id', row.id);
+						status.textContent = err ? `Error: ${err.message}` : 'Saved.';
+						if (!err) toast('Saved. Publish to make it live.');
+					});
+
+					del.addEventListener('click', async () => {
+						if (!confirm(`Remove ${row.name}?`)) return;
+						const { error: err } = await supabase.from('associate_directors').delete().eq('id', row.id);
+						if (err) return toast(err.message, 'err');
+						c.remove();
+						toast('Removed. Publish to make it live.');
+					});
+
+					c.append(
+						picker,
+						labeled('Name', name),
+						labeled('Role', role),
+						labeled('Order', order),
+						el('div', { class: 'row-actions' }, [save, del, status]),
+					);
+					return c;
+				}
+
+				function addForm() {
+					const form = el('form', { class: 'add-form' });
+					const name = field('', '');
+					const role = field('', '');
+					name.placeholder = 'Name';
+					role.placeholder = 'Role (e.g. Visual & Graphics)';
+					let avatarUrl: string | null = null;
+					const picker = imagePicker(null, 'associates', (url) => (avatarUrl = url));
+					const submit = el('button', { type: 'submit', class: 'btn primary small' }, ['+ Add associate director']);
+					form.append(el('h3', {}, ['Add a new associate director']), picker, name, role, submit);
+					form.addEventListener('submit', async (e) => {
+						e.preventDefault();
+						if (!name.value.trim() || !role.value.trim()) return;
+						const { data: inserted, error: err } = await supabase
+							.from('associate_directors')
+							.insert({
+								group_key: 'sb',
+								group_label: 'IEEE MIST Student Branch',
+								name: name.value.trim(),
+								role: role.value.trim(),
+								avatar_url: avatarUrl,
+								sort_order: list.children.length,
+							})
+							.select()
+							.single();
+						if (err) return toast(err.message, 'err');
+						list.append(card(inserted));
+						form.reset();
+						avatarUrl = null;
+						toast('Added. Publish to make it live.');
+					});
+					return form;
+				}
+			}
+
+			// ---------------------------------------------------------------------
+			// Recent Activities (the `events` table)
+			// ---------------------------------------------------------------------
+			async function renderActivitiesPanel(host: HTMLElement) {
+				host.replaceChildren(el('p', { class: 'muted' }, ['Loading…']));
+				const { data, error } = await supabase.from('events').select('*').order('event_date', { ascending: false });
+				if (error) {
+					host.replaceChildren(el('p', { class: 'error' }, [error.message]));
+					return;
+				}
+				host.replaceChildren();
+				host.append(
+					el('p', { class: 'muted' }, [
+						'These power the "Recent Activities" section and the Events page. Only events marked Published are shown to visitors.',
+					]),
+				);
+				const list = el('div', { class: 'card-list' });
+				host.append(list, addEventForm());
+				for (const row of data || []) list.append(eventCard(row));
+
+				function chapterSelect(value: string) {
+					const sel = el('select', { class: 'field' }) as HTMLSelectElement;
+					for (const c of CHAPTERS) {
+						const opt = el('option', { value: c }, [c]);
+						if (c === value) opt.setAttribute('selected', 'true');
+						sel.append(opt);
+					}
+					return sel;
+				}
+
+				function eventCard(row: any) {
+					const c = el('div', { class: 'member-card event-card-edit' });
+					const title = field('', row.title);
+					const slug = field('', row.slug);
+					const date = el('input', { type: 'date', class: 'field', value: row.event_date }) as HTMLInputElement;
+					const chapter = chapterSelect(row.chapter);
+					const description = field('', row.description, true, 2);
+					const body = field('', row.body || '', true, 4);
+					const location = field('', row.location || '');
+					const time = field('', row.event_time || '');
+					const regLink = field('', row.registration_link || '');
+					const tags = field('', (row.tags || []).join(', '));
+					let imageUrl: string | null = row.image_url || null;
+					const picker = imagePicker(imageUrl, 'events', (url) => (imageUrl = url));
+
+					const regOpen = el('input', { type: 'checkbox' }) as HTMLInputElement;
+					regOpen.checked = !!row.registration_open;
+					const featured = el('input', { type: 'checkbox' }) as HTMLInputElement;
+					featured.checked = !!row.featured;
+					const published = el('input', { type: 'checkbox' }) as HTMLInputElement;
+					published.checked = !!row.published;
+
+					const status = el('span', { class: 'muted small' }, ['']);
+					const save = el('button', { class: 'btn small' }, ['Save']);
+					const del = el('button', { class: 'btn small danger' }, ['Delete']);
+
+					save.addEventListener('click', async () => {
+						status.textContent = 'Saving…';
+						const { error: err } = await supabase
+							.from('events')
+							.update({
+								title: title.value.trim(),
+								slug: slug.value.trim(),
+								event_date: date.value,
+								chapter: chapter.value,
+								description: description.value.trim(),
+								body: body.value.trim() || null,
+								location: location.value.trim() || null,
+								event_time: time.value.trim() || null,
+								registration_link: regLink.value.trim() || null,
+								registration_open: regOpen.checked,
+								featured: featured.checked,
+								published: published.checked,
+								tags: tags.value.split(',').map((t) => t.trim()).filter(Boolean),
+								image_url: imageUrl,
+							})
+							.eq('id', row.id);
+						status.textContent = err ? `Error: ${err.message}` : 'Saved.';
+						if (!err) toast('Saved. Publish to make it live.');
+					});
+
+					del.addEventListener('click', async () => {
+						if (!confirm(`Delete event "${row.title}"?`)) return;
+						const { error: err } = await supabase.from('events').delete().eq('id', row.id);
+						if (err) return toast(err.message, 'err');
+						c.remove();
+						toast('Deleted. Publish to make it live.');
+					});
+
+					c.append(
+						picker,
+						labeled('Title', title),
+						labeled('Slug (used in the URL)', slug),
+						labeled('Date', date),
+						labeled('Chapter', chapter),
+						labeled('Short description', description),
+						labeled('Full details', body),
+						labeled('Location', location),
+						labeled('Time', time),
+						labeled('Registration link', regLink),
+						labeled('Tags (comma-separated)', tags),
+						checkboxRow('Registration open', regOpen),
+						checkboxRow('Featured', featured),
+						checkboxRow('Published (visible on the site)', published),
+						el('div', { class: 'row-actions' }, [save, del, status]),
+					);
+					return c;
+				}
+
+				function checkboxRow(text: string, box: HTMLInputElement) {
+					const wrap = el('label', { class: 'checkbox-row' });
+					wrap.append(box, el('span', {}, [text]));
+					return wrap;
+				}
+
+				function addEventForm() {
+					const form = el('form', { class: 'add-form' });
+					const title = field('', '');
+					const slug = field('', '');
+					const date = el('input', { type: 'date', class: 'field' }) as HTMLInputElement;
+					const chapter = chapterSelect('SB');
+					const description = field('', '', true, 2);
+					title.placeholder = 'Title';
+					slug.placeholder = 'url-slug-like-this';
+					description.placeholder = 'One or two sentences';
+					let imageUrl: string | null = null;
+					const picker = imagePicker(null, 'events', (url) => (imageUrl = url));
+					const submit = el('button', { type: 'submit', class: 'btn primary small' }, ['+ Add activity / event']);
+					form.append(
+						el('h3', {}, ['Add a new activity']),
+						picker,
+						labeled('Title', title),
+						labeled('Slug', slug),
+						labeled('Date', date),
+						labeled('Chapter', chapter),
+						labeled('Short description', description),
+						submit,
+					);
+					form.addEventListener('submit', async (e) => {
+						e.preventDefault();
+						if (!title.value.trim() || !slug.value.trim() || !date.value || !description.value.trim()) {
+							toast('Title, slug, date and description are required.', 'err');
+							return;
+						}
+						const { data: inserted, error: err } = await supabase
+							.from('events')
+							.insert({
+								title: title.value.trim(),
+								slug: slug.value.trim().toLowerCase(),
+								event_date: date.value,
+								chapter: chapter.value,
+								description: description.value.trim(),
+								image_url: imageUrl,
+								published: false,
+							})
+							.select()
+							.single();
+						if (err) return toast(err.message, 'err');
+						list.append(eventCard(inserted));
+						form.reset();
+						imageUrl = null;
+						toast('Added as a draft — tick "Published" on the card to show it on the site, then Publish.');
+					});
+					return form;
+				}
+			}
+
+			// ---------------------------------------------------------------------
+			// Publishing: trigger a rebuild once content is saved.
+			// ---------------------------------------------------------------------
+			async function renderSettingsPanel(host: HTMLElement) {
+				host.replaceChildren(el('p', { class: 'muted' }, ['Loading…']));
+				const { data, error } = await supabase.from('site_settings').select('*').eq('key', 'deploy_hook_url').maybeSingle();
+				host.replaceChildren();
+
+				const explainer = el('div', { class: 'callout' });
+				explainer.innerHTML = `
+					<p><strong>Why "Publish" is a separate step:</strong> this site is a static export, so a saved change goes straight into the database, but the live pages only pick it up on the next build. Paste your host's <em>Deploy Hook URL</em> below once (Vercel: Project Settings → Git → Deploy Hooks) and the Publish button will trigger a fresh build after every batch of edits — live in about a minute.</p>
+				`;
+
+				const hookInput = field('', data?.value || '');
+				hookInput.placeholder = 'https://api.vercel.com/v1/integrations/deploy/…';
+				const saveHook = el('button', { class: 'btn small' }, ['Save hook URL']);
+				const hookStatus = el('span', { class: 'muted small' }, ['']);
+
+				saveHook.addEventListener('click', async () => {
+					hookStatus.textContent = 'Saving…';
+					const { error: err } = await supabase
+						.from('site_settings')
+						.upsert({ key: 'deploy_hook_url', value: hookInput.value.trim(), updated_at: new Date().toISOString() });
+					hookStatus.textContent = err ? `Error: ${err.message}` : 'Saved.';
+				});
+
+				const publishBtn = el('button', { class: 'btn primary' }, ['Publish changes now']);
+				const publishStatus = el('p', { class: 'muted small' }, ['']);
+				publishBtn.addEventListener('click', async () => {
+					const url = hookInput.value.trim();
+					if (!url) {
+						publishStatus.textContent = 'Add and save a Deploy Hook URL first.';
+						return;
+					}
+					publishBtn.setAttribute('disabled', 'true');
+					publishStatus.textContent = 'Triggering a new build…';
+					try {
+						await fetch(url, { method: 'POST', mode: 'no-cors' });
+						publishStatus.textContent = 'Build triggered. Changes go live in about a minute.';
+						toast('Publish triggered.');
+					} catch (err: any) {
+						publishStatus.textContent = `Could not reach the deploy hook: ${err.message || err}`;
+					}
+					publishBtn.removeAttribute('disabled');
+				});
+
+				host.append(
+					explainer,
+					labeled('Deploy Hook URL', hookInput),
+					el('div', { class: 'row-actions' }, [saveHook, hookStatus]),
+					el('hr', {}),
+					publishBtn,
+					publishStatus,
+				);
+			}
+
+			// ---------------------------------------------------------------------
+			// Boot
+			// ---------------------------------------------------------------------
+			supabase.auth.onAuthStateChange((_event, session) => {
+				if (session?.user) {
+					renderShell(session.user.email || 'Signed in');
+				} else {
+					renderLogin();
+				}
+			});
+		</script>
+
+		<style>
+			:root {
+				--navy: #002855;
+				--blue: #00629b;
+				--bg: #f5f7fa;
+				--border: #e2e6ec;
+			}
+			* { box-sizing: border-box; }
+			body {
+				margin: 0;
+				font-family: 'Inter', system-ui, -apple-system, sans-serif;
+				background: var(--bg);
+				color: #1a1f2b;
+			}
+			.boot { padding: 40px; text-align: center; color: #667; }
+
+			.login-card {
+				max-width: 380px;
+				margin: 10vh auto;
+				background: #fff;
+				border: 1px solid var(--border);
+				border-radius: 16px;
+				padding: 32px;
+				display: flex;
+				flex-direction: column;
+				gap: 12px;
+				box-shadow: 0 10px 30px rgba(0, 40, 85, 0.08);
+			}
+			.login-card h1 { font-size: 20px; margin: 0 0 4px; color: var(--navy); }
+			.muted { color: #6b7280; font-size: 14px; margin: 0; }
+			.muted.small { font-size: 12px; }
+			.error { color: #b42318; font-size: 13px; min-height: 16px; margin: 0; }
+
+			.field {
+				width: 100%;
+				padding: 10px 12px;
+				border: 1px solid var(--border);
+				border-radius: 8px;
+				font-size: 14px;
+				font-family: inherit;
+			}
+			.field.small { width: 90px; }
+
+			.btn {
+				padding: 10px 18px;
+				border-radius: 8px;
+				border: 1px solid var(--border);
+				background: #fff;
+				font-size: 14px;
+				cursor: pointer;
+			}
+			.btn.small { padding: 6px 12px; font-size: 13px; }
+			.btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+			.btn.ghost { background: transparent; border-color: rgba(255, 255, 255, 0.4); color: #fff; }
+			.btn.danger { color: #b42318; border-color: #f3c6c1; }
+			.btn:disabled { opacity: 0.6; cursor: default; }
+
+			.topbar {
+				background: var(--navy);
+				color: #fff;
+				padding: 16px 24px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.brand { font-weight: 600; }
+			.who { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+
+			.tabbar {
+				display: flex;
+				gap: 4px;
+				padding: 12px 24px 0;
+				background: #fff;
+				border-bottom: 1px solid var(--border);
+				overflow-x: auto;
+			}
+			.tab {
+				padding: 10px 16px;
+				border: none;
+				background: transparent;
+				border-bottom: 3px solid transparent;
+				cursor: pointer;
+				font-size: 14px;
+				color: #4b5563;
+				white-space: nowrap;
+			}
+			.tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+			.panel-host { padding: 24px; max-width: 900px; margin: 0 auto; }
+			.panel { display: none; flex-direction: column; gap: 16px; }
+			.panel.active { display: flex; }
+
+			.edit-form { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+			.labeled { display: flex; flex-direction: column; gap: 6px; }
+			.label-text { font-size: 13px; font-weight: 600; color: #374151; }
+
+			.imgpick { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+			.imgpick-preview { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; background: #eef1f5; }
+			.imgpick-status { font-size: 12px; color: #6b7280; }
+
+			.card-list { display: flex; flex-direction: column; gap: 12px; }
+			.member-card, .add-form {
+				background: #fff;
+				border: 1px solid var(--border);
+				border-radius: 12px;
+				padding: 16px;
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+			}
+			.add-form h3 { margin: 0 0 4px; font-size: 14px; color: var(--navy); }
+			.row-actions { display: flex; align-items: center; gap: 10px; }
+			.checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+
+			.callout {
+				background: #eef4fb;
+				border: 1px solid #d3e3f4;
+				border-radius: 10px;
+				padding: 16px;
+				font-size: 14px;
+				color: #1f3a5f;
+			}
+			.callout p { margin: 0; }
+
+			.toast {
+				position: fixed;
+				bottom: 24px;
+				left: 50%;
+				transform: translateX(-50%) translateY(20px);
+				background: #1a1f2b;
+				color: #fff;
+				padding: 12px 20px;
+				border-radius: 8px;
+				font-size: 14px;
+				opacity: 0;
+				pointer-events: none;
+				transition: all 0.2s ease;
+			}
+			.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+			.toast.err { background: #b42318; }
+		</style>
+	</body>
+</html>

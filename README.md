@@ -162,6 +162,29 @@ npm run preview
 
 That's it — the event will appear on the live site automatically after the build finishes (usually within a minute or two).
 
+## Content Dashboard (`/dashboard`)
+
+A login-protected page for editing the Chief Patron's Message, Counselor's Message, Executive
+Committee, Associate Directors, and Recent Activities (events) — no code or GitHub access needed.
+Backed by the `leadership_messages`, `executive_committee`, and `associate_directors` tables added
+in `supabase/schema.sql` (already applied to the live project), plus the existing `events` table.
+
+**One-time setup:**
+
+1. **Create an admin login.** Supabase dashboard → **Authentication → Users → Add User**. Use a real
+   email and a strong password — anyone who can sign in here can edit every field on the site.
+   (There's no public sign-up page; accounts are only created from the Supabase dashboard.)
+2. **Get a Deploy Hook.** This is a static site, so a save goes into the database instantly but the
+   live pages only regenerate on the next build. On Vercel: **Project Settings → Git → Deploy Hooks**
+   → create one → copy the URL.
+3. Open `/dashboard`, sign in, go to the **Publishing** tab, paste the Deploy Hook URL, **Save hook
+   URL**. From then on, after making edits, click **Publish changes now** — the site is updated in
+   about a minute.
+
+Photos uploaded from the dashboard go to the public `site-content` Storage bucket. If Supabase can't
+be reached at build time, the site falls back to the last-known copy, so a bad save can't take the
+site down.
+
 ## Deployment
 
 The site auto-deploys via Vercel/Netlify on every push to the `main` branch. The official IEEE MIST domain is pointed to the hosting provider via DNS (CNAME), so the site is served on our official domain while hosting remains free.

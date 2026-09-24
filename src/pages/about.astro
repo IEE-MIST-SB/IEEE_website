@@ -3,8 +3,11 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import HeroCircuitPattern from '../components/HeroCircuitPattern.astro';
-import { executiveCommittee, associateCommittee } from '../data/committee';
+import { getExecutiveCommittee, getAssociateCommittee } from '../lib/content';
 import { withBase } from '../utils/paths';
+
+const executiveCommittee = await getExecutiveCommittee();
+const associateCommittee = await getAssociateCommittee();
 
 /**
  * Content sourced from IEEE_MIST_SB_Website_Content.md, supplied directly by the user:

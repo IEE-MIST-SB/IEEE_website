@@ -1,6 +1,8 @@
 ---
-import { executiveCommittee as members } from '../data/committee';
+import { getExecutiveCommittee } from '../lib/content';
 import { withBase } from '../utils/paths';
+
+const members = await getExecutiveCommittee();
 ---
 
 
