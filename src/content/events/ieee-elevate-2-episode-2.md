@@ -3,6 +3,7 @@ title: "IEEE Elevate 2.0 — Episode 02"
 date: 2026-08-27
 chapter: "SB"
 description: "An exclusive technical webinar with Dr. Kamil Yavuz Kapusuz of IMEC and Ghent University, Belgium, on the science behind ultra-fast wireless communication."
+image: "/images/events/ieee-elevate-2-episode-2.jpg"
 location: "Online"
 time: "7:00 PM (GMT+6)"
 registrationOpen: false
